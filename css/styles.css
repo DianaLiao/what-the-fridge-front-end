@@ -6,3 +6,13 @@ div#login {
 main {
   display:none;
 }
+
+div#search-container {
+  display: block;
+  text-align: center;
+}
+
+div#main-fridge-stuff {
+  display: flex;
+  justify-content: space-evenly;
+}
