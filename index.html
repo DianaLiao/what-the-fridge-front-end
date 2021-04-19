@@ -10,13 +10,32 @@
     <header> 
       <nav></nav>
     </header>
-    <div>
-      <form id="search-form">
-        <input type="text" name="item">
-        <input type="submit" value="Search">
+    <div id="error">
+      <ul></ul>
+    </div>
+    <div id="login">
+      <h2>Login</h2>
+      <form id="login-form">
+        <input type="text" name="email" placeholder="E-mail">
+        <input type="submit" value="Login"> 
+      </form>
+      <hr>
+      <h2>Signup</h2>
+      <form id="signup">
+        <input type="text" name="name" placeholder="Name">
+        <input type="text" name="email" placeholder="E-mail">
+        <input type="submit" value="Signup"> 
       </form>
     </div>
     <main>
+      <div>
+        <h2>You've logged in!</h2>
+        <form id="search-form">
+          <input type="text" name="item">
+          <input type="submit" value="Search">
+        </form>
+      </div>
+
       <section id="fridge-section">
 
       </section>
