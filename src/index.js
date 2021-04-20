@@ -12,6 +12,7 @@ const spoonacularKey = config.MY_API_KEY
 const spoonacularUrl = `https://api.spoonacular.com/food/ingredients/search?apiKey=${spoonacularKey}&query=`
 const spoonacularImageUrl = 'https://spoonacular.com/cdn/ingredients_100x100/'
 const logOutLink = document.querySelector("#sign-out")
+const displayTitle = document.querySelector("#display-title")
 
 logOutLink.addEventListener("click", logOut)
 fridgeDisplay.addEventListener("click", event => {
@@ -22,6 +23,19 @@ fridgeDisplay.addEventListener("click", event => {
     event.target.nextElementSibling.remove()
     event.target.className = "add-item-button"
     event.target.textContent = "Add Item to Fridge"
+  }
+})
+
+fridgeSection.addEventListener("click", event =>{
+  if (event.target.matches(".section-div")) {
+    fetchSectionById(event.target.dataset.id)
+      .then(displayFridgeContents)
+    displayTitle.textContent = event.target.textContent
+  }
+  else if (event.target.matches(".all-items")) {
+    fetchFridgeById(event.target.dataset.id)
+    .then(displayFridgeContents)
+    displayTitle.textContent = "All Items"
   }
 })
 
@@ -40,15 +54,14 @@ formDiv.addEventListener("submit", event => {
   }
 })
 
-function fetchObj(method, body){
-  return {
-    method,
-    headers: {
-      "Content-Type":"application/json",
-      "Accept":"application/json"
-    },
-    body: JSON.stringify(body)
-  }
+function fetchSectionById(sectionId){
+  return fetch(`${baseUrl}/sections/${sectionId}`)
+    .then(resp => resp.json())
+}
+
+function fetchFridgeById(fridgeId){
+  return fetch(`${baseUrl}/fridges/${fridgeId}`)
+    .then(resp => resp.json())
 }
 
 function isUserValid(response){
@@ -79,27 +92,53 @@ function fetchFirstFridge(userId) {
     .then(user => {
       fetch(`${baseUrl}/fridges/${user.fridges[0].id}`)
         .then(resp => resp.json())
-        .then(displayFridge)
+        .then(fridge => {
+          displayFridgeContents(fridge)
+          displayFridgeMenu(fridge)
+          displayTitle.textContent = "All Items"
+        })
     })
 }
 
-function displayFridge(fridge){
+function displayFridgeMenu(fridge){
   fridgeSection.textContent = fridge.name
   fridgeSection.dataset.id = fridge.id
+
+  fridge.sections.forEach(section => {
+    const sectionDiv = document.createElement("div")
+    sectionDiv.classList.add("section-div")
+    sectionDiv.textContent = section.name
+    sectionDiv.dataset.id = section.id
+
+    fridgeSection.append(sectionDiv)
+  })
+
+  const allItems = document.createElement("div")
+  allItems.classList.add("all-items")
+  allItems.dataset.id = fridge.id
+  allItems.textContent = "All that's in yo' fridge"
+  fridgeSection.append(allItems)
+}
+
+function displayFridgeContents(fridgeOrSection){
   itemList.innerHTML = ""
-  fridge.items.forEach(item => {
+  fridgeOrSection.items.forEach(item => {
     const itemListItem = document.createElement("li")
-    itemListItem.textContent = item.name
     itemListItem.dataset.id = item.id
     itemList.append(itemListItem)
     
+    const itemImage = document.createElement("img")
+    itemImage.src = item.image
+    itemImage.alt = item.name
+    itemListItem.append(itemImage)
+
     const itemSubList = document.createElement("ul")
+    const nameLi = document.createElement("li")
+    nameLi.textContent = item.name
+    itemSubList.append(nameLi)
     const quantityLi = document.createElement("li")
     quantityLi.textContent = `Amount: ${item.quantity}`
     itemSubList.append(quantityLi)
-    const imageLi = document.createElement("li")
-    imageLi.textContent = item.image
-    itemSubList.append(imageLi)
     const dateAddedLi = document.createElement("li")
     dateAddedLi.textContent = `Added on: ${item.dateAdded}`
     itemSubList.append(dateAddedLi)
@@ -120,6 +159,7 @@ searchForm.addEventListener("submit", event => {
 })
 
 function displaySearchResults(searchResults) {
+  displayTitle.textContent = "Search Results:"
   itemList.innerHTML = ""
   searchResults.results.forEach(item => {
     const searchItemName = document.createElement("li")
@@ -195,5 +235,22 @@ function createFridgeItem(event) {
   }
   fetch(`${baseUrl}/items`, fetchObj('POST', body))
     .then(resp => resp.json())
-    .then(console.log)
+    .then(item => {
+      fetchSectionById(item.sectionId)
+      .then(section => {
+        displayFridgeContents(section)
+        displayTitle.textContent = section.name
+      })
+    })
+}
+
+function fetchObj(method, body){
+  return {
+    method,
+    headers: {
+      "Content-Type":"application/json",
+      "Accept":"application/json"
+    },
+    body: JSON.stringify(body)
+  }
 }
