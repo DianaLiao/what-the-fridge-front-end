@@ -10,6 +10,12 @@ const searchForm = document.querySelector("form#search-form")
 const itemList = fridgeDisplay.querySelector("ul")
 const spoonacularUrl = 'https://api.spoonacular.com/food/ingredients/search?apiKey=53c0db67f0224581b5b024d12ffe3389&query='
 const spoonacularImageUrl = 'https://spoonacular.com/cdn/ingredients_100x100/'
+const logOutLink = document.querySelector("#sign-out")
+
+logOutLink.addEventListener("click", logOut)
+fridgeDisplay.addEventListener("click", event => {
+  if (event.target.matches(".add-item-button")) displayAddItemForm(event)
+})
 
 formDiv.addEventListener("submit", event => {
   event.preventDefault()
@@ -48,8 +54,13 @@ function isUserValid(response){
   }
   else {
     userId = response.id
-    formDiv.style.display = "none"
-    main.style.display = "block"
+    // formDiv.style.display = "none"
+    // main.style.display = "block"
+    // logOutLink.style.display = "inline-block"
+
+    formDiv.classList.add("hidden")
+    main.classList.remove("hidden")
+    logOutLink.classList.remove("hidden")
     fetchFirstFridge(response.id)
   }
 }
@@ -103,10 +114,43 @@ function displaySearchResults(searchResults) {
   itemList.innerHTML = ""
   searchResults.results.forEach(item => {
     const searchItemName = document.createElement("li")
+    const searchItemImage = document.createElement("img")
+    const addItemButton = document.createElement("button")
     searchItemName.textContent = `Name: ${item.name}`
-    const searchItemImage = document.createElement("li")
-    searchItemImage.innerHTML = `<img src=${spoonacularImageUrl}${item.image} alt=${item.name}>`
+    searchItemName.dataset.itemName = item.name
+    searchItemImage.src = `${spoonacularImageUrl}${item.image}`
+    searchItemImage.alt = item.name
+    // searchItemImage.innerHTML = `<img src=${spoonacularImageUrl}${item.image} alt=${item.name}>`
+    addItemButton.textContent = "Add Item to Fridge"
+    addItemButton.className = "add-item-button"
+
+    searchItemName.append(searchItemImage)
+    searchItemName.append(addItemButton)
     itemList.append(searchItemName)
-    itemList.append(searchItemImage)
+    // itemList.append(searchItemImage)
   })
+}
+
+function displayAddItemForm(event){
+  const addItemForm = document.createElement("form")
+  const parentLi = event.target.closest("li")
+  addItemForm.innerHTML = `
+    <input type="text" name="item" value="${parentLi.dataset.itemName}"><br>
+    <input type="text" name="quantity"><br>
+    <input type="date" name="dateAdded"><br>
+    <input type="date" name="expirationDate"><br>
+    <input type="submit" value="Add Item">
+  `
+  event.target.insertAdjacentElement('beforeend', addItemForm);
+}
+
+function logOut(){
+  // formDiv.style.display = "block"
+  // main.style.display = "none"
+  // logOutLink.style.display = "none"
+
+  formDiv.classList.remove("hidden")
+  main.classList.add("hidden")
+  logOutLink.classList.add("hidden")
+  userId = ""
 }

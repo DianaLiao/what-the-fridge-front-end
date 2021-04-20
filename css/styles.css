@@ -1,11 +1,8 @@
 
-div#login {
+/* div#login {
   display:block;
-}
+} */
 
-main {
-  display:none;
-}
 
 div#search-container {
   display: block;
@@ -15,4 +12,12 @@ div#search-container {
 div#main-fridge-stuff {
   display: flex;
   justify-content: space-evenly;
+}
+
+#display > ul > li > img{
+  display: block;
+}
+
+.hidden {
+  display: none;
 }
