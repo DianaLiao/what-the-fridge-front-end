@@ -150,7 +150,11 @@ function fetchFirstFridge(userId) {
 }
 
 function displayFridgeMenu(fridge){
-  fridgeSection.textContent = fridge.name
+  fridgeSection.innerHTML = ""
+
+  const fridgeName = document.createElement("h2")
+  fridgeName.textContent = fridge.name
+  fridgeSection.append(fridgeName)
   fridgeSection.dataset.id = fridge.id
 
   fridge.sections.forEach(section => {
@@ -196,7 +200,7 @@ function displayFridgeContents(fridgeOrSection){
     deleteBtn.dataset.id = item.id
     itemSubList.append(nameLi, quantityLi, dateAddedLi, expirationDateLi, deleteBtn)
     
-    itemList.append(itemSubList)
+    itemListItem.append(itemSubList)
   })
 }
 
@@ -252,7 +256,7 @@ function displayAddItemForm(event){
   parentLi.append(addItemForm)
   const addButton = parentLi.querySelector(".add-item-button")
   addButton.className = "remove-add-button"
-  addButton.textContent = "Close"
+  addButton.textContent = "❌"
   addItemForm.addEventListener("submit", createFridgeItem)
   const sectionSelect = addItemForm.querySelector("select")
   fetch(`${baseUrl}/fridges/${fridgeSection.dataset.id}`)

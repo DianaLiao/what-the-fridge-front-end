@@ -3,10 +3,10 @@
   display:block;
 } */
 
-
 div#search-container {
   display: block;
   text-align: center;
+  padding: 0px 0px 10px 0px;
 }
 
 div#main-fridge-stuff {
@@ -14,8 +14,48 @@ div#main-fridge-stuff {
   justify-content: space-evenly;
 }
 
-#display > ul > li > img{
-  display: block;
+section#fridge-section {
+  border: 2px solid;
+  padding: 5%;
+  margin-right: 10px;
+}
+
+section#display {
+  border: 2px solid;
+  padding: 5%;
+  margin-left: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+section#fridge-section div {
+  line-height: 2em;
+  display: flex;
+  border: cadetblue 2px solid;
+  align-items: center;
+  justify-content: center;
+  margin: 5px 0px;
+}
+
+section#display > ul {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+#display > ul > li {
+  border: 1px dotted green;
+  list-style-type: none;
+  margin: 5px;
+  padding: 5px;
+}
+
+h2 {
+  text-align: center;
+}
+
+li#sign-out {
+  width: fit-content;
 }
 
 .hidden {
