@@ -8,7 +8,8 @@ const fridgeSection = document.querySelector("section#fridge-section")
 const fridgeDisplay = document.querySelector("section#display")
 const searchForm = document.querySelector("form#search-form")
 const itemList = fridgeDisplay.querySelector("ul")
-const spoonacularUrl = 'https://api.spoonacular.com/food/ingredients/search?apiKey=53c0db67f0224581b5b024d12ffe3389&query='
+const spoonacularKey = config.MY_API_KEY
+const spoonacularUrl = `https://api.spoonacular.com/food/ingredients/search?apiKey=${spoonacularKey}&query=`
 const spoonacularImageUrl = 'https://spoonacular.com/cdn/ingredients_100x100/'
 const logOutLink = document.querySelector("#sign-out")
 
