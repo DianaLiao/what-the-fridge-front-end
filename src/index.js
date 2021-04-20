@@ -54,6 +54,55 @@ formDiv.addEventListener("submit", event => {
   }
 })
 
+searchForm.addEventListener("click", event => {
+  if (event.target.id === "create-item"){
+  const customForm = document.createElement("form")
+  customForm.innerHTML = `
+  <label for="item">Item</label><br>
+  <input type="text" name="item" value="${searchForm.item.value}"><br>
+  <label for="quantity">Amount</label><br>
+  <input type="text" name="quantity"><br>
+  <label for="dateAdded">Date Added</label><br>
+  <input type="date" name="dateAdded"><br>
+  <label for="expirationDate">Expiration Date</label><br>
+  <input type="date" name="expirationDate"><br>
+  <label for="image">Image</label><br>
+  <input type="text" name="image"><br>
+  <label for="section">Section</label><br>
+  <select name="section"></select><br>
+  <input type="submit" value="Add Item">
+  `
+  const sectionSelect = customForm.querySelector("select")
+  fetchFridgeById(fridgeSection.dataset.id)
+    .then(fridge => {
+      fridge.sections.forEach(section => {
+        sectionInput = document.createElement("option")
+        sectionInput.textContent = section.name 
+        sectionInput.value = section.id
+        sectionSelect.append(sectionInput)
+      })
+    })
+    const searchContainer = document.querySelector("div#search-container")
+    searchContainer.append(customForm)
+    event.target.textContent = "Close Custom Form"
+    event.target.id = "remove-create-button"
+    customForm.addEventListener("submit", createFridgeItem)
+  }
+  else if (event.target.matches("#remove-create-button")){
+    searchForm.nextElementSibling.remove()
+    event.target.id = "create-item"
+    event.target.textContent = "Create Your Own" 
+  }
+})
+
+searchForm.addEventListener("submit", event => {
+  event.preventDefault()
+  const searchItem = event.target.item.value
+  fetch(`${spoonacularUrl}${searchItem}`)
+    .then(resp => resp.json())
+    .then(displaySearchResults)
+})
+
 function fetchSectionById(sectionId){
   return fetch(`${baseUrl}/sections/${sectionId}`)
     .then(resp => resp.json())
@@ -135,28 +184,29 @@ function displayFridgeContents(fridgeOrSection){
     const itemSubList = document.createElement("ul")
     const nameLi = document.createElement("li")
     nameLi.textContent = item.name
-    itemSubList.append(nameLi)
     const quantityLi = document.createElement("li")
     quantityLi.textContent = `Amount: ${item.quantity}`
-    itemSubList.append(quantityLi)
     const dateAddedLi = document.createElement("li")
     dateAddedLi.textContent = `Added on: ${item.dateAdded}`
-    itemSubList.append(dateAddedLi)
     const expirationDateLi = document.createElement("li")
     expirationDateLi.textContent = `Expires on: ${item.expirationDate}`
-    itemSubList.append(expirationDateLi)
-
+    const deleteBtn = document.createElement("button")
+    deleteBtn.textContent = "Delete"
+    deleteBtn.addEventListener("click", removeItem)
+    deleteBtn.dataset.id = item.id
+    itemSubList.append(nameLi, quantityLi, dateAddedLi, expirationDateLi, deleteBtn)
+    
     itemList.append(itemSubList)
   })
 }
 
-searchForm.addEventListener("submit", event => {
-  event.preventDefault()
-  const searchItem = event.target.item.value
-  fetch(`${spoonacularUrl}${searchItem}`)
-    .then(resp => resp.json())
-    .then(displaySearchResults)
-})
+function removeItem(event) {
+  document.querySelector(`li[data-id="${event.target.dataset.id}"]`).remove()
+  event.target.parentElement.remove()
+  fetch(`${baseUrl}/items/${event.target.dataset.id}`, {
+    method: 'DELETE'
+  })
+}
 
 function displaySearchResults(searchResults) {
   displayTitle.textContent = "Search Results:"
@@ -186,10 +236,15 @@ function displayAddItemForm(event){
   const parentLi = event.target.closest("li")
   const image = parentLi.querySelector("img").src
   addItemForm.innerHTML = `
+  <label for="item">Item</label><br>
   <input type="text" name="item" value="${parentLi.dataset.itemName}"><br>
+  <label for="quantity">Amount</label><br>
   <input type="text" name="quantity"><br>
+  <label for="dateAdded">Date Added</label><br>
   <input type="date" name="dateAdded"><br>
+  <label for="expirationDate">Expiration Date</label><br>
   <input type="date" name="expirationDate"><br>
+  <label for="section">Section</label><br>
   <select name="section"></select><br>
   <input type="hidden" name="image" value=${image}>
   <input type="submit" value="Add Item">
