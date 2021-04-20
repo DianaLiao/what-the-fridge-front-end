@@ -15,7 +15,14 @@ const logOutLink = document.querySelector("#sign-out")
 
 logOutLink.addEventListener("click", logOut)
 fridgeDisplay.addEventListener("click", event => {
-  if (event.target.matches(".add-item-button")) displayAddItemForm(event)
+  if (event.target.matches(".add-item-button")){
+    displayAddItemForm(event)
+  }
+  else if (event.target.matches(".remove-add-button")){
+    event.target.nextElementSibling.remove()
+    event.target.className = "add-item-button"
+    event.target.textContent = "Add Item to Fridge"
+  }
 })
 
 formDiv.addEventListener("submit", event => {
@@ -78,6 +85,7 @@ function fetchFirstFridge(userId) {
 
 function displayFridge(fridge){
   fridgeSection.textContent = fridge.name
+  fridgeSection.dataset.id = fridge.id
   itemList.innerHTML = ""
   fridge.items.forEach(item => {
     const itemListItem = document.createElement("li")
@@ -122,6 +130,7 @@ function displaySearchResults(searchResults) {
     searchItemImage.src = `${spoonacularImageUrl}${item.image}`
     searchItemImage.alt = item.name
     // searchItemImage.innerHTML = `<img src=${spoonacularImageUrl}${item.image} alt=${item.name}>`
+    addItemButton.dataset.imageUrl = `${spoonacularImageUrl}${item.image}`
     addItemButton.textContent = "Add Item to Fridge"
     addItemButton.className = "add-item-button"
 
@@ -135,14 +144,32 @@ function displaySearchResults(searchResults) {
 function displayAddItemForm(event){
   const addItemForm = document.createElement("form")
   const parentLi = event.target.closest("li")
+  const image = parentLi.querySelector("img").src
   addItemForm.innerHTML = `
-    <input type="text" name="item" value="${parentLi.dataset.itemName}"><br>
-    <input type="text" name="quantity"><br>
-    <input type="date" name="dateAdded"><br>
-    <input type="date" name="expirationDate"><br>
-    <input type="submit" value="Add Item">
+  <input type="text" name="item" value="${parentLi.dataset.itemName}"><br>
+  <input type="text" name="quantity"><br>
+  <input type="date" name="dateAdded"><br>
+  <input type="date" name="expirationDate"><br>
+  <select name="section"></select><br>
+  <input type="hidden" name="image" value=${image}>
+  <input type="submit" value="Add Item">
   `
-  event.target.insertAdjacentElement('beforeend', addItemForm);
+  parentLi.append(addItemForm)
+  const addButton = parentLi.querySelector(".add-item-button")
+  addButton.className = "remove-add-button"
+  addButton.textContent = "Close"
+  addItemForm.addEventListener("submit", createFridgeItem)
+  const sectionSelect = addItemForm.querySelector("select")
+  fetch(`${baseUrl}/fridges/${fridgeSection.dataset.id}`)
+    .then(resp => resp.json())
+    .then(fridge => {
+      fridge.sections.forEach(section => {
+        sectionInput = document.createElement("option")
+        sectionInput.textContent = section.name 
+        sectionInput.value = section.id
+        sectionSelect.append(sectionInput)
+      })
+    })
 }
 
 function logOut(){
@@ -154,4 +181,19 @@ function logOut(){
   main.classList.add("hidden")
   logOutLink.classList.add("hidden")
   userId = ""
+}
+
+function createFridgeItem(event) {
+  event.preventDefault()
+  const body = {
+    name: event.target.item.value,
+    quantity: event.target.quantity.value,
+    date_added: event.target.dateAdded.value,
+    expiration_date: event.target.expirationDate.value,
+    image: event.target.image.value,
+    section_id: event.target.section.value
+  }
+  fetch(`${baseUrl}/items`, fetchObj('POST', body))
+    .then(resp => resp.json())
+    .then(console.log)
 }
