@@ -18,6 +18,13 @@ section#fridge-section {
   border: 2px solid;
   padding: 5%;
   margin-right: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+div#display-choices {
+  display: flex;
+  flex-direction: column;
 }
 
 section#display {
@@ -29,7 +36,7 @@ section#display {
   justify-content: center;
 }
 
-section#fridge-section div {
+div#display-choices div {
   line-height: 2em;
   display: flex;
   border: cadetblue 2px solid;

@@ -150,12 +150,13 @@ function fetchFirstFridge(userId) {
 }
 
 function displayFridgeMenu(fridge){
-  fridgeSection.innerHTML = ""
 
-  const fridgeName = document.createElement("h2")
+  const fridgeName = fridgeSection.querySelector("h2#fridge-name")
   fridgeName.textContent = fridge.name
-  fridgeSection.append(fridgeName)
+
   fridgeSection.dataset.id = fridge.id
+
+  const displayChoices = fridgeSection.querySelector("div#display-choices")
 
   fridge.sections.forEach(section => {
     const sectionDiv = document.createElement("div")
@@ -163,14 +164,33 @@ function displayFridgeMenu(fridge){
     sectionDiv.textContent = section.name
     sectionDiv.dataset.id = section.id
 
-    fridgeSection.append(sectionDiv)
+    displayChoices.append(sectionDiv)
   })
 
   const allItems = document.createElement("div")
   allItems.classList.add("all-items")
   allItems.dataset.id = fridge.id
   allItems.textContent = "All that's in yo' fridge"
-  fridgeSection.append(allItems)
+  displayChoices.append(allItems)
+
+  const addSectionDiv = fridgeSection.querySelector("div#add-section")
+  addSectionDiv.innerHTML = `
+    <p>Add a section to your fridge! </p>
+    <form>
+      <input type="text" name="name"><br>
+      <input type="submit" value="Add Fridge Section">
+    </form>
+  `
+  addSectionDiv.addEventListener("submit", event => {
+    event.preventDefault()
+    console.log(event.target)
+  })
+}
+
+// LOOK UP AND LOOK DOWN THESE THINGS NEED TO GET FIXED 
+
+function addFridgeSection(event){
+  event.preventDefault()
 }
 
 function displayFridgeContents(fridgeOrSection){
