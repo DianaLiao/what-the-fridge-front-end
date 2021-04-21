@@ -34,6 +34,7 @@ section#display {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  min-width: 50%;
 }
 
 div#display-choices div {

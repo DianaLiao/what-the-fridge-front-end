@@ -12,14 +12,16 @@
       <h1>Imma Fridge That</h1>
       <nav>
         <ul>
-          <li id="sign-out" class="hidden">Sign Out</li>
+          <li id="sign-out" class="">Sign Out</li>
+          <!-- change class back to hidden by default -->
         </ul>
       </nav>
     </header>
     <div id="error">
       <ul></ul>
     </div>
-    <div id="login">
+    <div id="login" class="hidden">
+      <!-- remove class of hidden by default -->
       <h2>Login</h2>
       <form id="login-form">
         <input type="text" name="email" placeholder="E-mail">
@@ -33,7 +35,8 @@
         <input type="submit" value="Signup">
       </form>
     </div>
-    <main class="hidden">
+    <main class="">
+      <!-- change class back to hidden by default -->
       <div id="search-container">
         <form id="search-form">
           <input type="text" name="item">

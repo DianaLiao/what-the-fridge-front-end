@@ -1,5 +1,8 @@
-let userId 
 const baseUrl = "http://localhost:3000"
+
+let userId = 3 //change back to null or whoever is testing
+fetchFirstFridge(userId) // remove before final version
+
 const formDiv = document.querySelector("div#login")
 const loginForm = document.querySelector("form#login-form")
 const main = document.querySelector("main")
@@ -178,7 +181,6 @@ function displayFridgeMenu(fridge){
   })
 }
 
-// LOOK UP AND LOOK DOWN THESE THINGS NEED TO GET FIXED 
 
 function addFridgeSection(event){
   event.preventDefault()
@@ -195,11 +197,10 @@ function addFridgeSection(event){
   event.target.reset()
 }
 
-function displayFridgeContents(fridgeOrSection){
-  itemList.innerHTML = ""
-  fridgeOrSection.items.forEach(item => {
-    const itemListItem = document.createElement("li")
+function renderOneItem(item){
+  const itemListItem = document.createElement("li")
     itemListItem.dataset.id = item.id
+    itemListItem.dataset.sectionId = item.sectionId
     itemList.append(itemListItem)
     
     const itemImage = document.createElement("img")
@@ -208,22 +209,151 @@ function displayFridgeContents(fridgeOrSection){
     itemListItem.append(itemImage)
 
     const itemSubList = document.createElement("ul")
+
     const nameLi = document.createElement("li")
     nameLi.textContent = item.name
+    nameLi.className = "item-name"
+
     const quantityLi = document.createElement("li")
     quantityLi.textContent = `Amount: ${item.quantity}`
+    quantityLi.className = "quantity"
+
     const dateAddedLi = document.createElement("li")
     dateAddedLi.textContent = `Added on: ${item.dateAdded}`
+    dateAddedLi.className = "date-added"
+
     const expirationDateLi = document.createElement("li")
     expirationDateLi.textContent = `Expires on: ${item.expirationDate}`
+    expirationDateLi.className = "exp-date"
+
+    const updateBtn = document.createElement("button")
+    updateBtn.textContent = "Update"
+    updateBtn.addEventListener("click", updateItem)
+
     const deleteBtn = document.createElement("button")
     deleteBtn.textContent = "Delete"
     deleteBtn.addEventListener("click", removeItem)
     deleteBtn.dataset.id = item.id
-    itemSubList.append(nameLi, quantityLi, dateAddedLi, expirationDateLi, deleteBtn)
+    itemSubList.append(nameLi, quantityLi, dateAddedLi, expirationDateLi, updateBtn, deleteBtn)
     
     itemListItem.append(itemSubList)
+}
+
+function displayFridgeContents(fridgeOrSection){
+  itemList.innerHTML = ""
+  fridgeOrSection.items.forEach(renderOneItem)
+
+  // fridgeOrSection.items.forEach(item => {
+  //   const itemListItem = document.createElement("li")
+  //   itemListItem.dataset.id = item.id
+  //   itemListItem.dataset.sectionId = item.sectionId
+  //   itemList.append(itemListItem)
+    
+  //   const itemImage = document.createElement("img")
+  //   itemImage.src = item.image
+  //   itemImage.alt = item.name
+  //   itemListItem.append(itemImage)
+
+  //   const itemSubList = document.createElement("ul")
+
+  //   const nameLi = document.createElement("li")
+  //   nameLi.textContent = item.name
+  //   nameLi.className = "item-name"
+
+  //   const quantityLi = document.createElement("li")
+  //   quantityLi.textContent = `Amount: ${item.quantity}`
+  //   quantityLi.className = "quantity"
+
+  //   const dateAddedLi = document.createElement("li")
+  //   dateAddedLi.textContent = `Added on: ${item.dateAdded}`
+  //   dateAddedLi.className = "date-added"
+
+  //   const expirationDateLi = document.createElement("li")
+  //   expirationDateLi.textContent = `Expires on: ${item.expirationDate}`
+  //   expirationDateLi.className = "exp-date"
+
+  //   const updateBtn = document.createElement("button")
+  //   updateBtn.textContent = "Update"
+  //   updateBtn.addEventListener("click", updateItem)
+
+  //   const deleteBtn = document.createElement("button")
+  //   deleteBtn.textContent = "Delete"
+  //   deleteBtn.addEventListener("click", removeItem)
+  //   deleteBtn.dataset.id = item.id
+  //   itemSubList.append(nameLi, quantityLi, dateAddedLi, expirationDateLi, updateBtn, deleteBtn)
+    
+  //   itemListItem.append(itemSubList)
+  // })
+}
+
+function updateItem(event) {
+  const updateItemForm = document.createElement("form")
+  const parentLi = event.target.closest("li")
+  
+  updateItemForm.innerHTML = `
+  ${parentLi.querySelector(".item-name").textContent} <br>
+  <label for="quantity">Amount:</label>
+  <input type="text" name="quantity" value="${parentLi.querySelector(".quantity").textContent.split(":").slice(1)[0].trim()}"><br>
+  ${parentLi.querySelector(".date-added").textContent}<br>
+  <label for="expirationDate">Expiration Date</label><br>
+  <input type="date" name="expDate" value="${parentLi.querySelector(".exp-date").textContent.split(":").slice(1)[0].trim()}"><br>
+  <label for="section">Section</label><br>
+  <select name="section"></select><br>
+  <button type="submit" name="update">Update Item</button>
+  <button type="button" name="cancel">❌</button> 
+  `
+  
+  const sectionSelect = updateItemForm.querySelector("select")
+  fetch(`${baseUrl}/fridges/${fridgeSection.dataset.id}`)
+  .then(resp => resp.json())
+  .then(fridge => {
+    fridge.sections.forEach(section => {
+      const sectionInput = document.createElement("option")
+      sectionInput.textContent = section.name 
+      sectionInput.value = section.id
+
+      if (section.id == parentLi.dataset.sectionId) {
+        sectionInput.selected = true
+      }
+
+      sectionSelect.append(sectionInput)
+    })
   })
+
+  parentLi.querySelector("ul").classList.add("hidden")
+  parentLi.append(updateItemForm)
+
+  updateItemForm.addEventListener("click", event => {
+    if (event.target.matches("button")) handleUpdateForm(event)
+  })
+}
+
+function handleUpdateForm(event){
+  event.preventDefault()
+  console.dir(event.target)
+
+  const parentLi = event.target.closest("li")
+
+  if (event.target.name === "cancel") {
+    parentLi.querySelector("ul").classList.remove("hidden")
+    event.target.form.remove()
+  }
+  else if (event.target.name === "update"){
+    const body = {
+      quantity: event.target.form.quantity.value,
+      expiration_date: event.target.form.expDate.value
+    }
+
+    fetch(`${baseUrl}/items/${parentLi.dataset.id}`, fetchObj("PATCH", body))
+      .then(resp => resp.json())
+      .then(upItem => {
+        fetchSectionById(upItem.sectionId)
+          .then(section => {
+            displayFridgeContents(section)
+            displayTitle.textContent = section.name
+      })
+    })
+  }
 }
 
 function removeItem(event) {
