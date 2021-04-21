@@ -230,7 +230,14 @@ function renderOneItem({id, sectionId, name, image, quantity, dateAdded, expirat
   deleteBtn.addEventListener("click", removeItem)
   deleteBtn.dataset.id = id
 
-  cardButtonDiv.append(updateBtn, deleteBtn)
+  const rottenBtn = document.createElement("button")
+  rottenBtn.textContent = "Threw it Out 😢"
+  rottenBtn.classList.add("card-button","btn-danger")
+  deleteBtn.addEventListener("click", event => {
+    alert("You monster. J/K. This button does nothing else.")
+  })
+
+  cardButtonDiv.append(updateBtn, deleteBtn, rottenBtn)
   cardBodyDiv.append(cardButtonDiv)
 
   // const itemListItem = document.createElement("li")
@@ -281,15 +288,15 @@ function displayFridgeContents(fridgeOrSection){
 
 function updateItem(event) {
   const updateItemForm = document.createElement("form")
-  const parentLi = event.target.closest("li")
+  const parentCard = event.target.closest(".card")
   
   updateItemForm.innerHTML = `
-  ${parentLi.querySelector(".item-name").textContent} <br>
+  ${parentCard.querySelector(".item-name").textContent} <br>
   <label for="quantity">Amount:</label>
-  <input type="text" name="quantity" value="${parentLi.querySelector(".quantity").textContent.split(":").slice(1)[0].trim()}"><br>
-  ${parentLi.querySelector(".date-added").textContent}<br>
+  <input type="text" name="quantity" value="${parentCard.querySelector(".quantity").textContent.split(":").slice(1)[0].trim()}"><br>
+  ${parentCard.querySelector(".date-added").textContent}<br>
   <label for="expirationDate">Expiration Date</label><br>
-  <input type="date" name="expDate" value="${parentLi.querySelector(".exp-date").textContent.split(":").slice(1)[0].trim()}"><br>
+  <input type="date" name="expDate" value="${parentCard.querySelector(".exp-date").textContent.split(":").slice(1)[0].trim()}"><br>
   <label for="section">Section</label><br>
   <select name="section"></select><br>
   <button type="submit" name="update">Update Item</button>
@@ -305,7 +312,7 @@ function updateItem(event) {
       sectionInput.textContent = section.name 
       sectionInput.value = section.id
 
-      if (section.id == parentLi.dataset.sectionId) {
+      if (section.id == parentCard.dataset.sectionId) {
         sectionInput.selected = true
       }
 
@@ -313,8 +320,8 @@ function updateItem(event) {
     })
   })
 
-  parentLi.querySelector("ul").classList.add("hidden")
-  parentLi.append(updateItemForm)
+  parentCard.querySelector(".card-body").classList.add("hidden")
+  parentCard.append(updateItemForm)
 
   updateItemForm.addEventListener("click", event => {
     if (event.target.matches("button")) handleUpdateForm(event)
@@ -323,12 +330,11 @@ function updateItem(event) {
 
 function handleUpdateForm(event){
   event.preventDefault()
-  console.dir(event.target)
 
-  const parentLi = event.target.closest("li")
+  const parentCard = event.target.closest(".card")
 
   if (event.target.name === "cancel") {
-    parentLi.querySelector("ul").classList.remove("hidden")
+    parentCard.querySelector(".card-body").classList.remove("hidden")
     event.target.form.remove()
   }
   else if (event.target.name === "update"){
@@ -337,7 +343,7 @@ function handleUpdateForm(event){
       expiration_date: event.target.form.expDate.value
     }
 
-    fetch(`${baseUrl}/items/${parentLi.dataset.id}`, fetchObj("PATCH", body))
+    fetch(`${baseUrl}/items/${parentCard.dataset.id}`, fetchObj("PATCH", body))
       .then(resp => resp.json())
       .then(upItem => {
         fetchSectionById(upItem.sectionId)
@@ -360,33 +366,52 @@ function removeItem(event) {
 function displaySearchResults(searchResults) {
   displayTitle.textContent = "Search Results:"
   itemList.innerHTML = ""
+  
   searchResults.results.forEach(item => {
-    const searchItemName = document.createElement("li")
-    const searchItemImage = document.createElement("img")
+    const itemDiv = document.createElement("div")
+    itemDiv.classList.add("card")
+    itemDiv.dataset.itemName = item.name
+    itemList.append(itemDiv)
+
+    itemDiv.innerHTML = `
+    <img class="card-img-top" src='${spoonacularImageUrl}${item.image}' alt=${item.name}>
+    <div class="card-body">
+      <h5 class="card-title item-name">${item.name}</h5>
+    </div>
+  `
     const addItemButton = document.createElement("button")
-    searchItemName.textContent = `Name: ${item.name}`
-    searchItemName.dataset.itemName = item.name
-    searchItemImage.src = `${spoonacularImageUrl}${item.image}`
-    searchItemImage.alt = item.name
-    // searchItemImage.innerHTML = `<img src=${spoonacularImageUrl}${item.image} alt=${item.name}>`
     addItemButton.dataset.imageUrl = `${spoonacularImageUrl}${item.image}`
     addItemButton.textContent = "Add Item to Fridge"
     addItemButton.className = "add-item-button"
+    itemDiv.append(addItemButton)
 
-    searchItemName.append(searchItemImage)
-    searchItemName.append(addItemButton)
-    itemList.append(searchItemName)
-    // itemList.append(searchItemImage)
+    // const searchItemName = document.createElement("li")
+    // const searchItemImage = document.createElement("img")
+    // const addItemButton = document.createElement("button")
+    // searchItemName.textContent = `Name: ${item.name}`
+    // searchItemName.dataset.itemName = item.name
+    // searchItemImage.src = `${spoonacularImageUrl}${item.image}`
+    // searchItemImage.alt = item.name
+    // // searchItemImage.innerHTML = `<img src=${spoonacularImageUrl}${item.image} alt=${item.name}>`
+    // addItemButton.dataset.imageUrl = `${spoonacularImageUrl}${item.image}`
+    // addItemButton.textContent = "Add Item to Fridge"
+    // addItemButton.className = "add-item-button"
+
+    // searchItemName.append(searchItemImage)
+    // searchItemName.append(addItemButton)
+    // itemList.append(searchItemName)
+    // // itemList.append(searchItemImage)
+
   })
 }
 
 function displayAddItemForm(event){
   const addItemForm = document.createElement("form")
-  const parentLi = event.target.closest("li")
-  const image = parentLi.querySelector("img").src
+  const parentCard = event.target.closest(".card")
+  const image = parentCard.querySelector("img").src
   addItemForm.innerHTML = `
   <label for="item">Item</label><br>
-  <input type="text" name="item" value="${parentLi.dataset.itemName}"><br>
+  <input type="text" name="item" value="${parentCard.dataset.itemName}"><br>
   <label for="quantity">Amount</label><br>
   <input type="text" name="quantity"><br>
   <label for="dateAdded">Date Added</label><br>
@@ -398,8 +423,8 @@ function displayAddItemForm(event){
   <input type="hidden" name="image" value=${image}>
   <input type="submit" value="Add Item">
   `
-  parentLi.append(addItemForm)
-  const addButton = parentLi.querySelector(".add-item-button")
+  parentCard.append(addItemForm)
+  const addButton = parentCard.querySelector(".add-item-button")
   addButton.className = "remove-add-button"
   addButton.textContent = "❌"
   addItemForm.addEventListener("submit", createFridgeItem)

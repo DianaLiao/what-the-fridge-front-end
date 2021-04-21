@@ -107,10 +107,14 @@ section#display > ul {
   width: 100px;
 }
 
+#display .card-title {
+  padding: 10px;
+}
+
 #display div.card ul {
   list-style-type: none;
   margin: 0;
-  padding: 0;
+  padding: 5px;
 }
 
 .card-button-div {
