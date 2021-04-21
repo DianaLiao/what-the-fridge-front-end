@@ -15,6 +15,7 @@ div#main-fridge-stuff {
 }
 
 section#fridge-section {
+  background-color: darkgreen;
   border: 2px solid;
   padding: 5%;
   margin-right: 10px;
@@ -28,6 +29,7 @@ div#display-choices {
 }
 
 section#display {
+  background-color: darkgreen;
   border: 2px solid;
   padding: 5%;
   margin-left: 10px;
@@ -38,12 +40,18 @@ section#display {
 }
 
 div#display-choices div {
+  background-color: white;
   line-height: 2em;
   display: flex;
-  border: cadetblue 2px solid;
+  border: 2px solid black;
   align-items: center;
   justify-content: center;
   margin: 5px 0px;
+  border-style: ridge;
+}
+
+div#display-choices div:hover {
+  cursor: pointer
 }
 
 section#display > ul {
@@ -52,11 +60,31 @@ section#display > ul {
 }
 
 #display > ul > li {
-  border: 1px dotted green;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  align-items: center;
+  border: 2px solid black;
   list-style-type: none;
   margin: 5px;
   padding: 5px;
+  border-style: ridge;
 }
+
+#display > ul > li > img {
+  justify-self: center;
+  height: 100px;
+  width: 100px;
+}
+
+#display > ul > li > ul> li {
+  list-style-type: none;
+}
+
+#display > ul > li > ul> button {
+  margin: 5px;
+}
+
 
 h2 {
   text-align: center;
