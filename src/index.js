@@ -150,7 +150,6 @@ function fetchFirstFridge(userId) {
 }
 
 function displayFridgeMenu(fridge){
-
   const fridgeName = fridgeSection.querySelector("h2#fridge-name")
   fridgeName.textContent = fridge.name
 
@@ -158,21 +157,14 @@ function displayFridgeMenu(fridge){
 
   const displayChoices = fridgeSection.querySelector("div#display-choices")
 
-  fridge.sections.forEach(section => {
-    const sectionDiv = document.createElement("div")
-    sectionDiv.classList.add("section-div")
-    sectionDiv.textContent = section.name
-    sectionDiv.dataset.id = section.id
-
-    displayChoices.append(sectionDiv)
-  })
-
   const allItems = document.createElement("div")
   allItems.classList.add("all-items")
   allItems.dataset.id = fridge.id
   allItems.textContent = "All that's in yo' fridge"
   displayChoices.append(allItems)
-
+  
+  fridge.sections.forEach(renderSectionName)
+ 
   const addSectionDiv = fridgeSection.querySelector("div#add-section")
   addSectionDiv.innerHTML = `
     <p>Add a section to your fridge! </p>
@@ -196,10 +188,11 @@ function addFridgeSection(event){
     fridge_id: fridgeSection.dataset.id
   }
 
-  // fetch(`${baseUrl}/sections`, fetchObj("POST", body))
-  //   .then(resp => resp.json())
-  //   .then
+  fetch(`${baseUrl}/sections`, fetchObj("POST", body))
+    .then(resp => resp.json())
+    .then(renderSectionName)
 
+  event.target.reset()
 }
 
 function displayFridgeContents(fridgeOrSection){
@@ -301,7 +294,13 @@ function displayAddItemForm(event){
 }
 
 function renderSectionName(section){
+  const allItems = fridgeSection.querySelector("div.all-items")
+  const sectionDiv = document.createElement("div")
+  sectionDiv.classList.add("section-div")
+  sectionDiv.textContent = section.name
+  sectionDiv.dataset.id = section.id
 
+  allItems.insertAdjacentElement("beforebegin", sectionDiv)
 }
 
 function logOut(){
