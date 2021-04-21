@@ -233,7 +233,7 @@ function renderOneItem({id, sectionId, name, image, quantity, dateAdded, expirat
   const rottenBtn = document.createElement("button")
   rottenBtn.textContent = "Threw it Out 😢"
   rottenBtn.classList.add("card-button","btn-danger")
-  deleteBtn.addEventListener("click", event => {
+  rottenBtn.addEventListener("click", event => {
     alert("You monster. J/K. This button does nothing else.")
   })
 
@@ -356,8 +356,8 @@ function handleUpdateForm(event){
 }
 
 function removeItem(event) {
-  document.querySelector(`li[data-id="${event.target.dataset.id}"]`).remove()
-  event.target.parentElement.remove()
+  document.querySelector(`div.card[data-id="${event.target.dataset.id}"]`).remove()
+  // event.target.parentElement.remove()
   fetch(`${baseUrl}/items/${event.target.dataset.id}`, {
     method: 'DELETE'
   })
