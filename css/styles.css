@@ -59,7 +59,7 @@ section#display > ul {
   flex-flow: row wrap;
 }
 
-#display > ul > li {
+/* #display > ul > li {
   display: flex;
   flex-direction: column;
   background-color: white;
@@ -69,22 +69,58 @@ section#display > ul {
   margin: 5px;
   padding: 5px;
   border-style: ridge;
-}
+} */
 
-#display > ul > li > img {
+/* #display > ul > li > img {
   justify-self: center;
   height: 100px;
   width: 100px;
-}
+} */
 
-#display > ul > li > ul> li {
+
+/* #display > ul > li > ul> li {
   list-style-type: none;
 }
 
 #display > ul > li > ul> button {
   margin: 5px;
+} */
+
+#display div.card {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  align-items: center;
+  border: 2px solid black;
+  list-style-type: none;
+  margin: 5px;
+  padding: 5px;
+  border-style: ridge;
+  max-width: 14em;
 }
 
+
+#display div.card img {
+  padding: 10px 0px 0px 0px;
+  justify-self: center;
+  height: 100px;
+  width: 100px;
+}
+
+#display div.card ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.card-button-div {
+  display:flex;
+  justify-content: space-evenly;
+}
+
+.card-button {
+  margin: 5px;
+}
 
 h2 {
   text-align: center;

@@ -1,6 +1,6 @@
 const baseUrl = "http://localhost:3000"
 
-let userId = 6 //change back to null or whoever is testing
+let userId = 3 //change back to null or whoever is testing
 fetchFirstFridge(userId) // remove before final version
 
 const formDiv = document.querySelector("div#login")
@@ -197,46 +197,81 @@ function addFridgeSection(event){
   event.target.reset()
 }
 
-function renderOneItem(item){
-  const itemListItem = document.createElement("li")
-    itemListItem.dataset.id = item.id
-    itemListItem.dataset.sectionId = item.sectionId
-    itemList.append(itemListItem)
+function renderOneItem({id, sectionId, name, image, quantity, dateAdded, expirationDate}){
+  const itemDiv = document.createElement("div")
+  itemDiv.dataset.id = id
+  itemDiv.dataset.sectionId = sectionId
+  itemDiv.classList.add("card")
+  itemList.append(itemDiv)
+
+  itemDiv.innerHTML = `
+    <img class="card-img-top" src=${image} alt=${name}>
+    <div class="card-body">
+      <h5 class="card-title item-name">${name}</h5>
+      <ul>
+        <li class="quantity">Amount: ${quantity}</li>
+        <li class="date-added">Date Added: ${dateAdded}</li>
+        <li class="exp-date">Eat by: ${expirationDate}</li>
+      </ul>
+    </div>
+  `
+  const cardBodyDiv = itemDiv.querySelector(".card-body")
+  const cardButtonDiv = document.createElement("div")
+  cardButtonDiv.className = "card-button-div"
+
+  const updateBtn = document.createElement("button")
+  updateBtn.textContent = "Update"
+  updateBtn.classList.add("card-button","btn-success")
+  updateBtn.addEventListener("click", updateItem)
+
+  const deleteBtn = document.createElement("button")
+  deleteBtn.textContent = "Delete"
+  deleteBtn.classList.add("card-button","btn-warning")
+  deleteBtn.addEventListener("click", removeItem)
+  deleteBtn.dataset.id = id
+
+  cardButtonDiv.append(updateBtn, deleteBtn)
+  cardBodyDiv.append(cardButtonDiv)
+
+  // const itemListItem = document.createElement("li")
+  // itemListItem.dataset.id = item.id
+  // itemListItem.dataset.sectionId = item.sectionId
+  // itemList.append(itemListItem)
+
+    // const itemImage = document.createElement("img")
+    // itemImage.src = item.image
+    // itemImage.alt = item.name
+    // itemListItem.append(itemImage)
+
+    // const itemSubList = document.createElement("ul")
+
+    // const nameLi = document.createElement("li")
+    // nameLi.textContent = item.name
+    // nameLi.className = "item-name"
+
+    // const quantityLi = document.createElement("li")
+    // quantityLi.textContent = `Amount: ${item.quantity}`
+    // quantityLi.className = "quantity"
+
+    // const dateAddedLi = document.createElement("li")
+    // dateAddedLi.textContent = `Added on: ${item.dateAdded}`
+    // dateAddedLi.className = "date-added"
+
+    // const expirationDateLi = document.createElement("li")
+    // expirationDateLi.textContent = `Expires on: ${item.expirationDate}`
+    // expirationDateLi.className = "exp-date"
+
+    // const updateBtn = document.createElement("button")
+    // updateBtn.textContent = "Update"
+    // updateBtn.addEventListener("click", updateItem)
+
+    // const deleteBtn = document.createElement("button")
+    // deleteBtn.textContent = "Delete"
+    // deleteBtn.addEventListener("click", removeItem)
+    // deleteBtn.dataset.id = item.id
+    // itemSubList.append(nameLi, quantityLi, dateAddedLi, expirationDateLi, updateBtn, deleteBtn)
     
-    const itemImage = document.createElement("img")
-    itemImage.src = item.image
-    itemImage.alt = item.name
-    itemListItem.append(itemImage)
-
-    const itemSubList = document.createElement("ul")
-
-    const nameLi = document.createElement("li")
-    nameLi.textContent = item.name
-    nameLi.className = "item-name"
-
-    const quantityLi = document.createElement("li")
-    quantityLi.textContent = `Amount: ${item.quantity}`
-    quantityLi.className = "quantity"
-
-    const dateAddedLi = document.createElement("li")
-    dateAddedLi.textContent = `Added on: ${item.dateAdded}`
-    dateAddedLi.className = "date-added"
-
-    const expirationDateLi = document.createElement("li")
-    expirationDateLi.textContent = `Expires on: ${item.expirationDate}`
-    expirationDateLi.className = "exp-date"
-
-    const updateBtn = document.createElement("button")
-    updateBtn.textContent = "Update"
-    updateBtn.addEventListener("click", updateItem)
-
-    const deleteBtn = document.createElement("button")
-    deleteBtn.textContent = "Delete"
-    deleteBtn.addEventListener("click", removeItem)
-    deleteBtn.dataset.id = item.id
-    itemSubList.append(nameLi, quantityLi, dateAddedLi, expirationDateLi, updateBtn, deleteBtn)
-    
-    itemListItem.append(itemSubList)
+    // itemListItem.append(itemSubList)
 }
 
 function displayFridgeContents(fridgeOrSection){
