@@ -182,8 +182,7 @@ function displayFridgeMenu(fridge){
     </form>
   `
   addSectionDiv.addEventListener("submit", event => {
-    event.preventDefault()
-    console.log(event.target)
+    addFridgeSection(event)
   })
 }
 
@@ -191,6 +190,16 @@ function displayFridgeMenu(fridge){
 
 function addFridgeSection(event){
   event.preventDefault()
+  
+  const body = {
+    name: event.target.name.value,
+    fridge_id: fridgeSection.dataset.id
+  }
+
+  // fetch(`${baseUrl}/sections`, fetchObj("POST", body))
+  //   .then(resp => resp.json())
+  //   .then
+
 }
 
 function displayFridgeContents(fridgeOrSection){
@@ -289,6 +298,10 @@ function displayAddItemForm(event){
         sectionSelect.append(sectionInput)
       })
     })
+}
+
+function renderSectionName(section){
+
 }
 
 function logOut(){
