@@ -284,6 +284,16 @@ function renderOneItem({id, sectionId, name, image, quantity, dateAdded, expirat
 function displayFridgeContents(fridgeOrSection){
   itemList.innerHTML = ""
   fridgeOrSection.items.forEach(renderOneItem)
+
+  // *does not work well without section refresh after last item deleted due to optimistic rendering*
+  // const displayEnd = document.createElement("p")
+  // if (fridgeOrSection.items.length === 0){
+  //   displayEnd.textContent = "Section empty. You can delete this."
+  // }
+  // else {
+  //   displayEnd.textContent = "To delete this fridge section, please move or delete all items."
+  // }
+  // itemList.append(displayEnd)
 }
 
 function updateItem(event) {
