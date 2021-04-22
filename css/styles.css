@@ -19,15 +19,26 @@ header {
 header > h1 {
   position: relative;
   top: 30px;
+  background-color: rgba(255, 255, 255, 0.7);
+  width:fit-content;
+  margin: 0 auto;
 }
 
 
 nav {
   display: flex;
-  justify-content: flex-end;
-  align-items: center;
   background-color: rgb(44, 182, 44);
   opacity: 80%;
+  flex-direction: row;
+}
+
+nav li {
+  display: inline;
+}
+
+nav li#sign-out {
+  justify-self: end;
+  border: 1px solid;
 }
 
 div#search-container {
@@ -68,7 +79,7 @@ section#display {
   max-width: 60%;
 }
 
-div#display-choices div {
+div.section-div, div.all-items {
   background-color: white;
   line-height: 2em;
   display: flex;
@@ -80,7 +91,17 @@ div#display-choices div {
   text-align: center;
 }
 
-div#display-choices div:hover {
+div#add-section {
+  margin: auto;
+}
+
+div#add-section form {
+  display: flex;
+  flex-direction: column;
+  justify-items: center;
+}
+
+div.section-div:hover, .all-items:hover {
   cursor: pointer
 }
 

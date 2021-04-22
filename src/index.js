@@ -30,10 +30,12 @@ const itemList = fridgeDisplay.querySelector("ul")
 const spoonacularKey = config.MY_API_KEY
 const spoonacularUrl = `https://api.spoonacular.com/food/ingredients/search?apiKey=${spoonacularKey}&query=`
 const spoonacularImageUrl = 'https://spoonacular.com/cdn/ingredients_100x100/'
-const logOutLink = document.querySelector("#sign-out")
+// const logOutLink = document.querySelector("#sign-out")
+const navBar = document.querySelector("header nav")
 const displayTitle = document.querySelector("#display-title")
 
-logOutLink.addEventListener("click", logOut)
+navBar.addEventListener("click", logOut)
+
 fridgeDisplay.addEventListener("click", event => {
   if (event.target.matches(".add-item-button")) {
     displayAddItemForm(event)
@@ -148,10 +150,11 @@ function isUserValid(response) {
     // formDiv.style.display = "none"
     // main.style.display = "block"
     // logOutLink.style.display = "inline-block"
-
+    const welcomeNavText = document.querySelector("li#welcome-nav-text")
+    welcomeNavText.textContent = "Welcome"
     formDiv.classList.add("hidden")
     main.classList.remove("hidden")
-    logOutLink.classList.remove("hidden")
+    navBar.classList.remove("hidden")
     fetchFirstFridge(response.id)
   }
 }
@@ -179,6 +182,10 @@ function displayFridgeMenu(fridge) {
   const displayChoices = fridgeSection.querySelector("div#display-choices")
   displayChoices.innerHTML = ""
 
+  const trashDiv = document.querySelector("div#trash-basket")
+  trashDiv.innerHTML = ""
+
+
   const allItems = document.createElement("div")
   allItems.classList.add("all-items")
   allItems.dataset.id = fridge.id
@@ -191,8 +198,7 @@ function displayFridgeMenu(fridge) {
   const addSectionDiv = fridgeSection.querySelector("div#add-section")
   addSectionDiv.innerHTML = `
     <form>
-      <br>
-      <input type="text" name="name" placeholder="New Section Name"><br>
+      <input type="text" name="name" placeholder="New Section Name">
       <input type="submit" value="Add Fridge Section" >
     </form>
   `
@@ -534,29 +540,32 @@ function displayAddItemForm(event) {
 function renderSectionName(section) {
   const allItems = fridgeSection.querySelector("div.all-items")
 
-  const sectionDiv = document.createElement("div")
-  sectionDiv.classList.add("section-div")
-  sectionDiv.textContent = section.name
-  sectionDiv.dataset.id = section.id
-
+  
   if (section.name === trashSectionName) {
-    sectionDiv.id = "trash"
-    fridgeSection.append(sectionDiv)
+    const trashDiv = document.querySelector("div#trash-basket")
+    trashDiv.classList.add("section-div")
+    trashDiv.textContent = section.name
+    trashDiv.dataset.id = section.id
   }
   else {
+    const sectionDiv = document.createElement("div")
+    sectionDiv.classList.add("section-div")
+    sectionDiv.textContent = section.name
+    sectionDiv.dataset.id = section.id
     allItems.insertAdjacentElement("beforebegin", sectionDiv)
   }
 }
 
-function logOut() {
+function logOut(event) {
   // formDiv.style.display = "block"
   // main.style.display = "none"
   // logOutLink.style.display = "none"
-
-  formDiv.classList.remove("hidden")
-  main.classList.add("hidden")
-  logOutLink.classList.add("hidden")
-  userId = ""
+  if (event.target.matches("#sign-out")){
+    formDiv.classList.remove("hidden")
+    main.classList.add("hidden")
+    navBar.classList.add("hidden")
+    userId = ""
+  }
 }
 
 function createFridgeItem(event) {
