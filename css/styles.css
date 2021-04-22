@@ -26,19 +26,21 @@ header > h1 {
 
 
 nav {
-  display: flex;
   background-color: rgb(44, 182, 44);
-  opacity: 80%;
-  flex-direction: row;
+  opacity: 80%;  
 }
 
-nav li {
-  display: inline;
+nav > ul {
+  display: flex;
+  justify-content: space-between;
 }
 
 nav li#sign-out {
-  justify-self: end;
-  border: 1px solid;
+  padding-right: 40px;
+} 
+
+nav li#sign-out:hover {
+  cursor:pointer
 }
 
 div#search-container {
@@ -105,7 +107,7 @@ div.section-div:hover, .all-items:hover {
   cursor: pointer
 }
 
-section#display > ul {
+div#item-list {
   display: flex;
   flex-flow: row wrap;
 }
@@ -178,10 +180,6 @@ section#display > ul {
 
 h2 {
   text-align: center;
-}
-
-li#sign-out {
-  width: fit-content;
 }
 
 .hidden {

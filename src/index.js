@@ -26,7 +26,8 @@ const errorList = document.querySelector("div#error ul")
 const fridgeSection = document.querySelector("section#fridge-section")
 const fridgeDisplay = document.querySelector("section#display")
 const searchForm = document.querySelector("form#search-form")
-const itemList = fridgeDisplay.querySelector("ul")
+const itemList = fridgeDisplay.querySelector("div#item-list")
+const addSectionDiv = fridgeSection.querySelector("div#add-section")
 const spoonacularKey = config.MY_API_KEY
 const spoonacularUrl = `https://api.spoonacular.com/food/ingredients/search?apiKey=${spoonacularKey}&query=`
 const spoonacularImageUrl = 'https://spoonacular.com/cdn/ingredients_100x100/'
@@ -126,6 +127,10 @@ searchForm.addEventListener("submit", event => {
     .then(displaySearchResults)
 })
 
+addSectionDiv.addEventListener("submit", event => {
+  addFridgeSection(event)
+})
+
 function fetchSectionById(sectionId) {
   return fetch(`${baseUrl}/sections/${sectionId}`)
     .then(resp => resp.json())
@@ -189,22 +194,19 @@ function displayFridgeMenu(fridge) {
   const allItems = document.createElement("div")
   allItems.classList.add("all-items")
   allItems.dataset.id = fridge.id
-  allItems.textContent = "All that's in yo' fridge"
+  allItems.textContent = "All the foodz"
   displayChoices.append(allItems)
 
 
   fridge.sections.forEach(renderSectionName)
 
-  const addSectionDiv = fridgeSection.querySelector("div#add-section")
   addSectionDiv.innerHTML = `
     <form>
       <input type="text" name="name" placeholder="New Section Name">
       <input type="submit" value="Add Fridge Section" >
     </form>
   `
-  addSectionDiv.addEventListener("submit", event => {
-    addFridgeSection(event)
-  })
+ 
 }
 
 
@@ -229,7 +231,7 @@ function renderTrashItem({image, expirationDate, name, id, quantity}){
   itemDiv.classList.add("card")
   itemList.append(itemDiv)
 
-  const epitaphs = ["left behind", "lost forever", "wasted, like your life", "served no purpose"]
+  const epitaphs = ["left behind", "lost forever", "wasted, what a shame", "served no purpose"]
 
   itemDiv.innerHTML = `
     <img class="card-img-top" src=${image} alt=${name}>
@@ -252,7 +254,7 @@ function renderTrashItem({image, expirationDate, name, id, quantity}){
   // updateBtn.addEventListener("click", updateItem)
 
   const deleteBtn = document.createElement("button")
-  deleteBtn.textContent = "Delete"
+  deleteBtn.textContent = "Ate it!"
   deleteBtn.classList.add("card-button", "btn-warning")
   deleteBtn.addEventListener("click", _ => {
     Swal.fire({
@@ -325,6 +327,7 @@ function displayFridgeContents(fridgeOrSection) {
     else if (fridgeOrSection.items.length === 0) {
       displayEnd.textContent = "Section empty. You can delete this."
       const deleteButton = document.createElement("button")
+      deleteButton.textContent = "Delete Section"
       deleteButton.dataset.id = fridgeOrSection.id
       displayEnd.append(deleteButton)
       deleteButton.addEventListener("click", deleteSection)
