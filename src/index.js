@@ -1,6 +1,6 @@
 const baseUrl = "http://localhost:3000"
 
-let userId = 6 //change back to null or whoever is testing
+let userId = 3 //change back to null or whoever is testing
 fetchFirstFridge(userId) // remove before final version
 
 const formDiv = document.querySelector("div#login")
@@ -231,55 +231,15 @@ function renderOneItem({id, sectionId, name, image, quantity, dateAdded, expirat
   deleteBtn.addEventListener("click", removeItem)
   deleteBtn.dataset.id = id
 
-  const rottenBtn = document.createElement("button")
-  rottenBtn.textContent = "Threw it Out 😢"
-  rottenBtn.classList.add("card-button","btn-danger")
-  rottenBtn.addEventListener("click", event => {
-    alert("You monster. J/K. This button does nothing else.")
-  })
+  const trashBtn = document.createElement("button")
+  trashBtn.textContent = "Threw it Out 😢"
+  trashBtn.classList.add("card-button","btn-danger")
+  trashBtn.dataset.id = id
+  trashBtn.addEventListener("click", trashItem)
+  
 
-  cardButtonDiv.append(updateBtn, deleteBtn, rottenBtn)
+  cardButtonDiv.append(updateBtn, deleteBtn, trashBtn)
   cardBodyDiv.append(cardButtonDiv)
-
-  // const itemListItem = document.createElement("li")
-  // itemListItem.dataset.id = item.id
-  // itemListItem.dataset.sectionId = item.sectionId
-  // itemList.append(itemListItem)
-
-    // const itemImage = document.createElement("img")
-    // itemImage.src = item.image
-    // itemImage.alt = item.name
-    // itemListItem.append(itemImage)
-
-    // const itemSubList = document.createElement("ul")
-
-    // const nameLi = document.createElement("li")
-    // nameLi.textContent = item.name
-    // nameLi.className = "item-name"
-
-    // const quantityLi = document.createElement("li")
-    // quantityLi.textContent = `Amount: ${item.quantity}`
-    // quantityLi.className = "quantity"
-
-    // const dateAddedLi = document.createElement("li")
-    // dateAddedLi.textContent = `Added on: ${item.dateAdded}`
-    // dateAddedLi.className = "date-added"
-
-    // const expirationDateLi = document.createElement("li")
-    // expirationDateLi.textContent = `Expires on: ${item.expirationDate}`
-    // expirationDateLi.className = "exp-date"
-
-    // const updateBtn = document.createElement("button")
-    // updateBtn.textContent = "Update"
-    // updateBtn.addEventListener("click", updateItem)
-
-    // const deleteBtn = document.createElement("button")
-    // deleteBtn.textContent = "Delete"
-    // deleteBtn.addEventListener("click", removeItem)
-    // deleteBtn.dataset.id = item.id
-    // itemSubList.append(nameLi, quantityLi, dateAddedLi, expirationDateLi, updateBtn, deleteBtn)
-    
-    // itemListItem.append(itemSubList)
 }
 
 function displayFridgeContents(fridgeOrSection){
@@ -300,6 +260,27 @@ function displayFridgeContents(fridgeOrSection){
     }
     itemList.append(displayEnd)
   }
+}
+
+function trashItem(event){
+  const itemId = event.target.dataset.id
+  const body = {
+    trash: true
+  }
+
+
+  const card = document.querySelector(`div.card[data-id="${itemId}"]`)
+  // const sectionId = card.dataset.sectionId
+  card.remove()
+
+  fetch(`${baseUrl}/items/${itemId}`, fetchObj("PATCH", body))
+    .then(resp => resp.json())
+    .then(item => {
+      console.log("go to the trash section eventually")
+      console.log(item)
+      // render trash "section"
+    })
+
 }
 
 function updateItem(event) {
