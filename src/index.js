@@ -1,8 +1,24 @@
+/* main initialize functions, i.e. DOMContentLoaded stuff */
+
+
+/* global variables */
+
+
+/* event listeners */
+
+
+/* big display functions */
+
+
+
+/* helper & logic functions */
+
+
+
 const baseUrl = "http://localhost:3000"
 
-let userId = 6 //change back to null or whoever is testing
-fetchFirstFridge(userId) // remove before final version
-
+let userId 
+const trashSectionName = "Trash"
 const formDiv = document.querySelector("div#login")
 const loginForm = document.querySelector("form#login-form")
 const main = document.querySelector("main")
@@ -19,17 +35,17 @@ const displayTitle = document.querySelector("#display-title")
 
 logOutLink.addEventListener("click", logOut)
 fridgeDisplay.addEventListener("click", event => {
-  if (event.target.matches(".add-item-button")){
+  if (event.target.matches(".add-item-button")) {
     displayAddItemForm(event)
   }
-  else if (event.target.matches(".remove-add-button")){
+  else if (event.target.matches(".remove-add-button")) {
     event.target.previousElementSibling.remove()
     event.target.className = "add-item-button"
     event.target.textContent = "Add Item to Fridge"
   }
 })
 
-fridgeSection.addEventListener("click", event =>{
+fridgeSection.addEventListener("click", event => {
   if (event.target.matches(".section-div")) {
     fetchSectionById(event.target.dataset.id)
       .then(displayFridgeContents)
@@ -37,7 +53,7 @@ fridgeSection.addEventListener("click", event =>{
   }
   else if (event.target.matches(".all-items")) {
     fetchFridgeById(event.target.dataset.id)
-    .then(displayFridgeContents)
+      .then(displayFridgeContents)
     displayTitle.textContent = "All Items"
   }
 })
@@ -46,21 +62,21 @@ formDiv.addEventListener("submit", event => {
   event.preventDefault()
   errorList.innerHTML = ""
   if (event.target.matches("#login-form")) {
-    fetch(`${baseUrl}/users/login`, fetchObj("POST", {email: event.target.email.value.toLowerCase()}))
+    fetch(`${baseUrl}/users/login`, fetchObj("POST", { email: event.target.email.value.toLowerCase() }))
       .then(resp => resp.json())
       .then(isUserValid)
   }
   else if (event.target.matches("#signup")) {
-    fetch(`${baseUrl}/users/`, fetchObj("POST", {name: event.target.name.value, email: event.target.email.value.toLowerCase()}))
+    fetch(`${baseUrl}/users/`, fetchObj("POST", { name: event.target.name.value, email: event.target.email.value.toLowerCase() }))
       .then(resp => resp.json())
       .then(isUserValid)
   }
 })
 
 searchForm.addEventListener("click", event => {
-  if (event.target.id === "create-item"){
-  const customForm = document.createElement("form")
-  customForm.innerHTML = `
+  if (event.target.id === "create-item") {
+    const customForm = document.createElement("form")
+    customForm.innerHTML = `
   <label for="item">Item</label><br>
   <input type="text" name="item" value="${searchForm.item.value}"><br>
   <label for="quantity">Amount</label><br>
@@ -75,26 +91,28 @@ searchForm.addEventListener("click", event => {
   <select name="section"></select><br>
   <input type="submit" value="Add Item">
   `
-  const sectionSelect = customForm.querySelector("select")
-  fetchFridgeById(fridgeSection.dataset.id)
-    .then(fridge => {
-      fridge.sections.forEach(section => {
-        sectionInput = document.createElement("option")
-        sectionInput.textContent = section.name 
-        sectionInput.value = section.id
-        sectionSelect.append(sectionInput)
+    const sectionSelect = customForm.querySelector("select")
+    fetchFridgeById(fridgeSection.dataset.id)
+      .then(fridge => {
+        fridge.sections
+          .filter(section => section.name !== trashSectionName)
+          .forEach(section => {
+          sectionInput = document.createElement("option")
+          sectionInput.textContent = section.name
+          sectionInput.value = section.id
+          sectionSelect.append(sectionInput)
+        })
       })
-    })
     const searchContainer = document.querySelector("div#search-container")
     searchContainer.append(customForm)
     event.target.textContent = "Close Custom Form"
     event.target.id = "remove-create-button"
     customForm.addEventListener("submit", createFridgeItem)
   }
-  else if (event.target.matches("#remove-create-button")){
+  else if (event.target.matches("#remove-create-button")) {
     searchForm.nextElementSibling.remove()
     event.target.id = "create-item"
-    event.target.textContent = "Create Your Own" 
+    event.target.textContent = "Create Your Own"
   }
 })
 
@@ -106,18 +124,18 @@ searchForm.addEventListener("submit", event => {
     .then(displaySearchResults)
 })
 
-function fetchSectionById(sectionId){
+function fetchSectionById(sectionId) {
   return fetch(`${baseUrl}/sections/${sectionId}`)
     .then(resp => resp.json())
 }
 
-function fetchFridgeById(fridgeId){
+function fetchFridgeById(fridgeId) {
   return fetch(`${baseUrl}/fridges/${fridgeId}`)
     .then(resp => resp.json())
 }
 
-function isUserValid(response){
-  if (Array.isArray(response)){
+function isUserValid(response) {
+  if (Array.isArray(response)) {
     response.forEach(error => {
       const li = document.createElement("li")
       li.textContent = error
@@ -152,7 +170,7 @@ function fetchFirstFridge(userId) {
     })
 }
 
-function displayFridgeMenu(fridge){
+function displayFridgeMenu(fridge) {
   const fridgeName = fridgeSection.querySelector("h2#fridge-name")
   fridgeName.textContent = fridge.name
 
@@ -166,9 +184,10 @@ function displayFridgeMenu(fridge){
   allItems.dataset.id = fridge.id
   allItems.textContent = "All that's in yo' fridge"
   displayChoices.append(allItems)
-  
+
+
   fridge.sections.forEach(renderSectionName)
- 
+
   const addSectionDiv = fridgeSection.querySelector("div#add-section")
   addSectionDiv.innerHTML = `
     <form>
@@ -183,9 +202,9 @@ function displayFridgeMenu(fridge){
 }
 
 
-function addFridgeSection(event){
+function addFridgeSection(event) {
   event.preventDefault()
-  
+
   const body = {
     name: event.target.name.value,
     fridge_id: fridgeSection.dataset.id
@@ -198,7 +217,51 @@ function addFridgeSection(event){
   event.target.reset()
 }
 
-function renderOneItem({id, sectionId, name, image, quantity, dateAdded, expirationDate}){
+function renderTrashItem({image, expirationDate, name, id, quantity}){
+  const itemDiv = document.createElement("div")
+  itemDiv.dataset.id = id
+  itemDiv.classList.add("card")
+  itemList.append(itemDiv)
+
+  const epitaphs = ["left behind", "lost forever", "wasted, like your life", "served no purpose"]
+
+  itemDiv.innerHTML = `
+    <img class="card-img-top" src=${image} alt=${name}>
+    <div class="card-body">
+      <h5 class="card-title item-name">${name}</h5>
+      <ul>
+        <li class="exp-date">Died: ${expirationDate}</li>
+        <li class="quantity">${quantity}, ${epitaphs.sample()}</li>
+      </ul>
+    </div>
+  `
+
+  const cardBodyDiv = itemDiv.querySelector(".card-body")
+  const cardButtonDiv = document.createElement("div")
+  cardButtonDiv.className = "card-button-div"
+
+  // const updateBtn = document.createElement("button")
+  // updateBtn.textContent = "Update"
+  // updateBtn.classList.add("card-button", "btn-success")
+  // updateBtn.addEventListener("click", updateItem)
+
+  const deleteBtn = document.createElement("button")
+  deleteBtn.textContent = "Delete"
+  deleteBtn.classList.add("card-button", "btn-warning")
+  deleteBtn.addEventListener("click", _ => {
+    Swal.fire({
+      icon: 'error',
+      title: 'Nuh-uh',
+      text: 'There is no deleting from your Wall of Shame'
+    })
+  })
+  deleteBtn.dataset.id = id
+
+  cardButtonDiv.append(deleteBtn)
+  cardBodyDiv.append(cardButtonDiv)
+}
+
+function renderOneItem({ id, sectionId, name, image, quantity, dateAdded, expirationDate }) {
   const itemDiv = document.createElement("div")
   itemDiv.dataset.id = id
   itemDiv.dataset.sectionId = sectionId
@@ -222,73 +285,38 @@ function renderOneItem({id, sectionId, name, image, quantity, dateAdded, expirat
 
   const updateBtn = document.createElement("button")
   updateBtn.textContent = "Update"
-  updateBtn.classList.add("card-button","btn-success")
+  updateBtn.classList.add("card-button", "btn-success")
   updateBtn.addEventListener("click", updateItem)
 
   const deleteBtn = document.createElement("button")
   deleteBtn.textContent = "Delete"
-  deleteBtn.classList.add("card-button","btn-warning")
+  deleteBtn.classList.add("card-button", "btn-warning")
   deleteBtn.addEventListener("click", removeItem)
   deleteBtn.dataset.id = id
 
-  const rottenBtn = document.createElement("button")
-  rottenBtn.textContent = "Threw it Out 😢"
-  rottenBtn.classList.add("card-button","btn-danger")
-  rottenBtn.addEventListener("click", event => {
-    alert("You monster. J/K. This button does nothing else.")
-  })
+  const trashBtn = document.createElement("button")
+  trashBtn.textContent = "Threw it Out 😢"
+  trashBtn.classList.add("card-button", "btn-danger")
+  trashBtn.dataset.id = id
+  trashBtn.addEventListener("click", trashItem)
 
-  cardButtonDiv.append(updateBtn, deleteBtn, rottenBtn)
+
+  cardButtonDiv.append(updateBtn, deleteBtn, trashBtn)
   cardBodyDiv.append(cardButtonDiv)
-
-  // const itemListItem = document.createElement("li")
-  // itemListItem.dataset.id = item.id
-  // itemListItem.dataset.sectionId = item.sectionId
-  // itemList.append(itemListItem)
-
-    // const itemImage = document.createElement("img")
-    // itemImage.src = item.image
-    // itemImage.alt = item.name
-    // itemListItem.append(itemImage)
-
-    // const itemSubList = document.createElement("ul")
-
-    // const nameLi = document.createElement("li")
-    // nameLi.textContent = item.name
-    // nameLi.className = "item-name"
-
-    // const quantityLi = document.createElement("li")
-    // quantityLi.textContent = `Amount: ${item.quantity}`
-    // quantityLi.className = "quantity"
-
-    // const dateAddedLi = document.createElement("li")
-    // dateAddedLi.textContent = `Added on: ${item.dateAdded}`
-    // dateAddedLi.className = "date-added"
-
-    // const expirationDateLi = document.createElement("li")
-    // expirationDateLi.textContent = `Expires on: ${item.expirationDate}`
-    // expirationDateLi.className = "exp-date"
-
-    // const updateBtn = document.createElement("button")
-    // updateBtn.textContent = "Update"
-    // updateBtn.addEventListener("click", updateItem)
-
-    // const deleteBtn = document.createElement("button")
-    // deleteBtn.textContent = "Delete"
-    // deleteBtn.addEventListener("click", removeItem)
-    // deleteBtn.dataset.id = item.id
-    // itemSubList.append(nameLi, quantityLi, dateAddedLi, expirationDateLi, updateBtn, deleteBtn)
-    
-    // itemListItem.append(itemSubList)
 }
 
-function displayFridgeContents(fridgeOrSection){
+function displayFridgeContents(fridgeOrSection) {
   itemList.innerHTML = ""
-  fridgeOrSection.items.forEach(renderOneItem)
 
-  if (fridgeOrSection.classType === "section"){
+
+  if (fridgeOrSection.classType === "section") {
     const displayEnd = document.createElement("p")
-    if (fridgeOrSection.items.length === 0){
+    
+    if (fridgeOrSection.name === trashSectionName){
+      fridgeOrSection.items.forEach(renderTrashItem)
+      // callback to be replaced by new render option
+    }
+    else if (fridgeOrSection.items.length === 0) {
       displayEnd.textContent = "Section empty. You can delete this."
       const deleteButton = document.createElement("button")
       deleteButton.dataset.id = fridgeOrSection.id
@@ -296,16 +324,48 @@ function displayFridgeContents(fridgeOrSection){
       deleteButton.addEventListener("click", deleteSection)
     }
     else {
+      fridgeOrSection.items.forEach(renderOneItem)
       displayEnd.textContent = "To delete this fridge section, please move or delete all items."
     }
     itemList.append(displayEnd)
   }
+  else if (fridgeOrSection.classType === "fridge"){
+    fridgeOrSection.items
+      .filter(item => item.trash == false)
+      .forEach(renderOneItem)
+  }
+  else console.log("Something has gone awry")
+
+  
+}
+
+function trashItem(event) {
+  const itemId = event.target.dataset.id
+  const trashDiv = document.querySelector("#trash")
+  const body = {
+    trash: true,
+    section_id: trashDiv.dataset.id
+  }
+
+
+  const card = document.querySelector(`div.card[data-id="${itemId}"]`)
+  // const sectionId = card.dataset.sectionId
+  card.remove()
+
+  fetch(`${baseUrl}/items/${itemId}`, fetchObj("PATCH", body))
+    .then(resp => resp.json())
+    .then(item => {
+      console.log("go to the trash section eventually")
+      console.log(item)
+      // render trash "section"
+    })
+
 }
 
 function updateItem(event) {
   const updateItemForm = document.createElement("form")
   const parentCard = event.target.closest(".card")
-  
+
   updateItemForm.innerHTML = `
   ${parentCard.querySelector(".item-name").textContent} <br>
   <label for="quantity">Amount:</label>
@@ -318,23 +378,25 @@ function updateItem(event) {
   <button type="submit" name="update">Update Item</button>
   <button type="button" name="cancel">❌</button> 
   `
-  
+
   const sectionSelect = updateItemForm.querySelector("select")
   fetch(`${baseUrl}/fridges/${fridgeSection.dataset.id}`)
-  .then(resp => resp.json())
-  .then(fridge => {
-    fridge.sections.forEach(section => {
-      const sectionInput = document.createElement("option")
-      sectionInput.textContent = section.name 
-      sectionInput.value = section.id
+    .then(resp => resp.json())
+    .then(fridge => {
+      fridge.sections
+        .filter(section => section.name !== trashSectionName)
+        .forEach(section => {
+        const sectionInput = document.createElement("option")
+        sectionInput.textContent = section.name
+        sectionInput.value = section.id
 
-      if (section.id == parentCard.dataset.sectionId) {
-        sectionInput.selected = true
-      }
+        if (section.id == parentCard.dataset.sectionId) {
+          sectionInput.selected = true
+        }
 
-      sectionSelect.append(sectionInput)
+        sectionSelect.append(sectionInput)
+      })
     })
-  })
 
   parentCard.querySelector(".card-body").classList.add("hidden")
   parentCard.append(updateItemForm)
@@ -344,7 +406,7 @@ function updateItem(event) {
   })
 }
 
-function handleUpdateForm(event){
+function handleUpdateForm(event) {
   event.preventDefault()
 
   const parentCard = event.target.closest(".card")
@@ -353,7 +415,7 @@ function handleUpdateForm(event){
     parentCard.querySelector(".card-body").classList.remove("hidden")
     event.target.form.remove()
   }
-  else if (event.target.name === "update"){
+  else if (event.target.name === "update") {
     const body = {
       quantity: event.target.form.quantity.value,
       expiration_date: event.target.form.expDate.value,
@@ -367,8 +429,8 @@ function handleUpdateForm(event){
           .then(section => {
             displayFridgeContents(section)
             displayTitle.textContent = section.name
+          })
       })
-    })
   }
 }
 
@@ -381,7 +443,7 @@ function removeItem(event) {
     method: 'DELETE'
   })
     .then(resp => resp.json())
-    .then( () => {
+    .then(() => {
       fetchSectionById(sectionId)
         .then(displayFridgeContents)
     })
@@ -390,7 +452,7 @@ function removeItem(event) {
 function displaySearchResults(searchResults) {
   displayTitle.textContent = "Search Results:"
   itemList.innerHTML = ""
-  
+
   searchResults.results.forEach(item => {
     const itemDiv = document.createElement("div")
     itemDiv.classList.add("card")
@@ -429,7 +491,7 @@ function displaySearchResults(searchResults) {
   })
 }
 
-function displayAddItemForm(event){
+function displayAddItemForm(event) {
   const addItemForm = document.createElement("form")
   const parentCard = event.target.closest(".card")
   const image = parentCard.querySelector("img").src
@@ -457,27 +519,36 @@ function displayAddItemForm(event){
   fetch(`${baseUrl}/fridges/${fridgeSection.dataset.id}`)
     .then(resp => resp.json())
     .then(fridge => {
-      fridge.sections.forEach(section => {
-        sectionInput = document.createElement("option")
-        sectionInput.textContent = section.name 
-        sectionInput.value = section.id
-        sectionSelect.append(sectionInput)
+      fridge.sections
+        .filter(section => section.name !== trashSectionName)
+        .forEach(section => {
+          sectionInput = document.createElement("option")
+          sectionInput.textContent = section.name
+          sectionInput.value = section.id
+          sectionSelect.append(sectionInput)
       })
-    }) 
-    // addItemForm.insertAdjacentElement("beforeend", addButton)
+    })
+  // addItemForm.insertAdjacentElement("beforeend", addButton)
 }
 
-function renderSectionName(section){
+function renderSectionName(section) {
   const allItems = fridgeSection.querySelector("div.all-items")
+
   const sectionDiv = document.createElement("div")
   sectionDiv.classList.add("section-div")
   sectionDiv.textContent = section.name
   sectionDiv.dataset.id = section.id
 
-  allItems.insertAdjacentElement("beforebegin", sectionDiv)
+  if (section.name === trashSectionName) {
+    sectionDiv.id = "trash"
+    fridgeSection.append(sectionDiv)
+  }
+  else {
+    allItems.insertAdjacentElement("beforebegin", sectionDiv)
+  }
 }
 
-function logOut(){
+function logOut() {
   // formDiv.style.display = "block"
   // main.style.display = "none"
   // logOutLink.style.display = "none"
@@ -502,10 +573,10 @@ function createFridgeItem(event) {
     .then(resp => resp.json())
     .then(item => {
       fetchSectionById(item.sectionId)
-      .then(section => {
-        displayFridgeContents(section)
-        displayTitle.textContent = section.name
-      })
+        .then(section => {
+          displayFridgeContents(section)
+          displayTitle.textContent = section.name
+        })
     })
 }
 
@@ -524,13 +595,17 @@ function deleteSection(event) {
     })
 }
 
-function fetchObj(method, body){
+function fetchObj(method, body) {
   return {
     method,
     headers: {
-      "Content-Type":"application/json",
-      "Accept":"application/json"
+      "Content-Type": "application/json",
+      "Accept": "application/json"
     },
     body: JSON.stringify(body)
   }
+}
+
+Array.prototype.sample = function(){
+  return this[Math.floor(Math.random()*this.length)];
 }
