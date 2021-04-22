@@ -217,6 +217,50 @@ function addFridgeSection(event) {
   event.target.reset()
 }
 
+function renderTrashItem({image, expirationDate, name, id, quantity}){
+  const itemDiv = document.createElement("div")
+  itemDiv.dataset.id = id
+  itemDiv.classList.add("card")
+  itemList.append(itemDiv)
+
+  const epitaphs = ["left behind", "lost forever", "wasted, like your life", "served no purpose"]
+
+  itemDiv.innerHTML = `
+    <img class="card-img-top" src=${image} alt=${name}>
+    <div class="card-body">
+      <h5 class="card-title item-name">${name}</h5>
+      <ul>
+        <li class="exp-date">Died: ${expirationDate}</li>
+        <li class="quantity">${quantity}, ${epitaphs.sample()}</li>
+      </ul>
+    </div>
+  `
+
+  const cardBodyDiv = itemDiv.querySelector(".card-body")
+  const cardButtonDiv = document.createElement("div")
+  cardButtonDiv.className = "card-button-div"
+
+  // const updateBtn = document.createElement("button")
+  // updateBtn.textContent = "Update"
+  // updateBtn.classList.add("card-button", "btn-success")
+  // updateBtn.addEventListener("click", updateItem)
+
+  const deleteBtn = document.createElement("button")
+  deleteBtn.textContent = "Delete"
+  deleteBtn.classList.add("card-button", "btn-warning")
+  deleteBtn.addEventListener("click", _ => {
+    Swal.fire({
+      icon: 'error',
+      title: 'Nuh-uh',
+      text: 'There is no deleting from your Wall of Shame'
+    })
+  })
+  deleteBtn.dataset.id = id
+
+  cardButtonDiv.append(deleteBtn)
+  cardBodyDiv.append(cardButtonDiv)
+}
+
 function renderOneItem({ id, sectionId, name, image, quantity, dateAdded, expirationDate }) {
   const itemDiv = document.createElement("div")
   itemDiv.dataset.id = id
@@ -264,11 +308,15 @@ function renderOneItem({ id, sectionId, name, image, quantity, dateAdded, expira
 function displayFridgeContents(fridgeOrSection) {
   itemList.innerHTML = ""
 
-  fridgeOrSection.items.forEach(renderOneItem)
 
   if (fridgeOrSection.classType === "section") {
     const displayEnd = document.createElement("p")
-    if (fridgeOrSection.items.length === 0) {
+    
+    if (fridgeOrSection.name === trashSectionName){
+      fridgeOrSection.items.forEach(renderTrashItem)
+      // callback to be replaced by new render option
+    }
+    else if (fridgeOrSection.items.length === 0) {
       displayEnd.textContent = "Section empty. You can delete this."
       const deleteButton = document.createElement("button")
       deleteButton.dataset.id = fridgeOrSection.id
@@ -276,10 +324,19 @@ function displayFridgeContents(fridgeOrSection) {
       deleteButton.addEventListener("click", deleteSection)
     }
     else {
+      fridgeOrSection.items.forEach(renderOneItem)
       displayEnd.textContent = "To delete this fridge section, please move or delete all items."
     }
     itemList.append(displayEnd)
   }
+  else if (fridgeOrSection.classType === "fridge"){
+    fridgeOrSection.items
+      .filter(item => item.trash == false)
+      .forEach(renderOneItem)
+  }
+  else console.log("Something has gone awry")
+
+  
 }
 
 function trashItem(event) {
@@ -547,4 +604,8 @@ function fetchObj(method, body) {
     },
     body: JSON.stringify(body)
   }
+}
+
+Array.prototype.sample = function(){
+  return this[Math.floor(Math.random()*this.length)];
 }
