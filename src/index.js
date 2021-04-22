@@ -15,12 +15,10 @@
 
 
 
-
 const baseUrl = "http://localhost:3000"
 
-let userId = 3 //change back to null or whoever is testing
-fetchFirstFridge(userId) // remove before final version
-
+let userId 
+const trashSectionName = "Trash"
 const formDiv = document.querySelector("div#login")
 const loginForm = document.querySelector("form#login-form")
 const main = document.querySelector("main")
@@ -96,7 +94,9 @@ searchForm.addEventListener("click", event => {
     const sectionSelect = customForm.querySelector("select")
     fetchFridgeById(fridgeSection.dataset.id)
       .then(fridge => {
-        fridge.sections.forEach(section => {
+        fridge.sections
+          .filter(section => section.name !== trashSectionName)
+          .forEach(section => {
           sectionInput = document.createElement("option")
           sectionInput.textContent = section.name
           sectionInput.value = section.id
@@ -185,6 +185,7 @@ function displayFridgeMenu(fridge) {
   allItems.textContent = "All that's in yo' fridge"
   displayChoices.append(allItems)
 
+
   fridge.sections.forEach(renderSectionName)
 
   const addSectionDiv = fridgeSection.querySelector("div#add-section")
@@ -262,6 +263,7 @@ function renderOneItem({ id, sectionId, name, image, quantity, dateAdded, expira
 
 function displayFridgeContents(fridgeOrSection) {
   itemList.innerHTML = ""
+
   fridgeOrSection.items.forEach(renderOneItem)
 
   if (fridgeOrSection.classType === "section") {
@@ -282,8 +284,10 @@ function displayFridgeContents(fridgeOrSection) {
 
 function trashItem(event) {
   const itemId = event.target.dataset.id
+  const trashDiv = document.querySelector("#trash")
   const body = {
-    trash: true
+    trash: true,
+    section_id: trashDiv.dataset.id
   }
 
 
@@ -322,7 +326,9 @@ function updateItem(event) {
   fetch(`${baseUrl}/fridges/${fridgeSection.dataset.id}`)
     .then(resp => resp.json())
     .then(fridge => {
-      fridge.sections.forEach(section => {
+      fridge.sections
+        .filter(section => section.name !== trashSectionName)
+        .forEach(section => {
         const sectionInput = document.createElement("option")
         sectionInput.textContent = section.name
         sectionInput.value = section.id
@@ -456,11 +462,13 @@ function displayAddItemForm(event) {
   fetch(`${baseUrl}/fridges/${fridgeSection.dataset.id}`)
     .then(resp => resp.json())
     .then(fridge => {
-      fridge.sections.forEach(section => {
-        sectionInput = document.createElement("option")
-        sectionInput.textContent = section.name
-        sectionInput.value = section.id
-        sectionSelect.append(sectionInput)
+      fridge.sections
+        .filter(section => section.name !== trashSectionName)
+        .forEach(section => {
+          sectionInput = document.createElement("option")
+          sectionInput.textContent = section.name
+          sectionInput.value = section.id
+          sectionSelect.append(sectionInput)
       })
     })
   // addItemForm.insertAdjacentElement("beforeend", addButton)
@@ -468,12 +476,19 @@ function displayAddItemForm(event) {
 
 function renderSectionName(section) {
   const allItems = fridgeSection.querySelector("div.all-items")
+
   const sectionDiv = document.createElement("div")
   sectionDiv.classList.add("section-div")
   sectionDiv.textContent = section.name
   sectionDiv.dataset.id = section.id
 
-  allItems.insertAdjacentElement("beforebegin", sectionDiv)
+  if (section.name === trashSectionName) {
+    sectionDiv.id = "trash"
+    fridgeSection.append(sectionDiv)
+  }
+  else {
+    allItems.insertAdjacentElement("beforebegin", sectionDiv)
+  }
 }
 
 function logOut() {
