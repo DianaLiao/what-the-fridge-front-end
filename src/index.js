@@ -1,6 +1,6 @@
 const baseUrl = "http://localhost:3000"
 
-let userId = 3 //change back to null or whoever is testing
+let userId = 6 //change back to null or whoever is testing
 fetchFirstFridge(userId) // remove before final version
 
 const formDiv = document.querySelector("div#login")
@@ -23,7 +23,7 @@ fridgeDisplay.addEventListener("click", event => {
     displayAddItemForm(event)
   }
   else if (event.target.matches(".remove-add-button")){
-    event.target.nextElementSibling.remove()
+    event.target.previousElementSibling.remove()
     event.target.className = "add-item-button"
     event.target.textContent = "Add Item to Fridge"
   }
@@ -350,7 +350,8 @@ function handleUpdateForm(event){
   else if (event.target.name === "update"){
     const body = {
       quantity: event.target.form.quantity.value,
-      expiration_date: event.target.form.expDate.value
+      expiration_date: event.target.form.expDate.value,
+      section_id: event.target.form.section.value
     }
 
     fetch(`${baseUrl}/items/${parentCard.dataset.id}`, fetchObj("PATCH", body))
@@ -437,6 +438,7 @@ function displayAddItemForm(event){
   const addButton = parentCard.querySelector(".add-item-button")
   addButton.className = "remove-add-button"
   addButton.textContent = "❌"
+  parentCard.append(addButton)
   addItemForm.addEventListener("submit", createFridgeItem)
   const sectionSelect = addItemForm.querySelector("select")
   fetch(`${baseUrl}/fridges/${fridgeSection.dataset.id}`)
@@ -448,7 +450,7 @@ function displayAddItemForm(event){
         sectionInput.value = section.id
         sectionSelect.append(sectionInput)
       })
-    })
+    }) 
 }
 
 function renderSectionName(section){

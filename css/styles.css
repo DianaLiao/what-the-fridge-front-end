@@ -2,6 +2,20 @@
 /* div#login {
   display:block;
 } */
+li {
+  list-style-type: none;
+}
+
+header > h1 {
+  text-align: center;
+}
+
+nav {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  border: 1px solid black;
+}
 
 div#search-container {
   display: block;
@@ -37,6 +51,7 @@ section#display {
   flex-direction: column;
   justify-content: center;
   min-width: 50%;
+  max-width: 60%;
 }
 
 div#display-choices div {
@@ -48,6 +63,7 @@ div#display-choices div {
   justify-content: center;
   margin: 5px 0px;
   border-style: ridge;
+  text-align: center;
 }
 
 div#display-choices div:hover {
@@ -92,7 +108,6 @@ section#display > ul {
   background-color: white;
   align-items: center;
   border: 2px solid black;
-  list-style-type: none;
   margin: 5px;
   padding: 5px;
   border-style: ridge;
@@ -112,7 +127,6 @@ section#display > ul {
 }
 
 #display div.card ul {
-  list-style-type: none;
   margin: 0;
   padding: 5px;
 }
