@@ -26,7 +26,6 @@ nav {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  border: 1px solid black;
   background-color: rgb(44, 182, 44);
   opacity: 80%;
 }
@@ -127,6 +126,7 @@ section#display > ul {
   padding: 5px;
   border-style: ridge;
   max-width: 14em;
+  height: max-content;
 }
 
 
