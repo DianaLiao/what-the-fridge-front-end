@@ -18,7 +18,7 @@
 const baseUrl = "http://localhost:3000"
 
 let userId 
-const trashSectionName = "Trash"
+const trashSectionName = "Wall of Shame"
 const formDiv = document.querySelector("div#login")
 const loginForm = document.querySelector("form#login-form")
 const main = document.querySelector("main")
@@ -31,7 +31,6 @@ const addSectionDiv = fridgeSection.querySelector("div#add-section")
 const spoonacularKey = config.MY_API_KEY
 const spoonacularUrl = `https://api.spoonacular.com/food/ingredients/search?apiKey=${spoonacularKey}&query=`
 const spoonacularImageUrl = 'https://spoonacular.com/cdn/ingredients_100x100/'
-// const logOutLink = document.querySelector("#sign-out")
 const navBar = document.querySelector("header nav")
 const displayTitle = document.querySelector("#display-title")
 
@@ -152,9 +151,6 @@ function isUserValid(response) {
   }
   else {
     userId = response.id
-    // formDiv.style.display = "none"
-    // main.style.display = "block"
-    // logOutLink.style.display = "inline-block"
     const welcomeNavText = document.querySelector("li#welcome-nav-text")
     welcomeNavText.textContent = "Welcome"
     formDiv.classList.add("hidden")
@@ -205,8 +201,7 @@ function displayFridgeMenu(fridge) {
       <input type="text" name="name" placeholder="New Section Name">
       <input type="submit" value="Add Fridge Section" >
     </form>
-  `
- 
+  ` 
 }
 
 
@@ -248,11 +243,6 @@ function renderTrashItem({image, expirationDate, name, id, quantity}){
   const cardButtonDiv = document.createElement("div")
   cardButtonDiv.className = "card-button-div"
 
-  // const updateBtn = document.createElement("button")
-  // updateBtn.textContent = "Update"
-  // updateBtn.classList.add("card-button", "btn-success")
-  // updateBtn.addEventListener("click", updateItem)
-
   const deleteBtn = document.createElement("button")
   deleteBtn.textContent = "Ate it!"
   deleteBtn.classList.add("card-button", "btn-warning")
@@ -260,7 +250,7 @@ function renderTrashItem({image, expirationDate, name, id, quantity}){
     Swal.fire({
       icon: 'error',
       title: 'Nuh-uh',
-      text: 'There is no deleting from your Wall of Shame'
+      text: "You shouldn't eat food from the garbage!"
     })
   })
   deleteBtn.dataset.id = id
@@ -322,7 +312,6 @@ function displayFridgeContents(fridgeOrSection) {
     
     if (fridgeOrSection.name === trashSectionName){
       fridgeOrSection.items.forEach(renderTrashItem)
-      // callback to be replaced by new render option
     }
     else if (fridgeOrSection.items.length === 0) {
       displayEnd.textContent = "Section empty. You can delete this."
@@ -344,13 +333,11 @@ function displayFridgeContents(fridgeOrSection) {
       .forEach(renderOneItem)
   }
   else console.log("Something has gone awry")
-
-  
 }
 
 function trashItem(event) {
   const itemId = event.target.dataset.id
-  const trashDiv = document.querySelector("#trash")
+  const trashDiv = document.querySelector("#trash-basket")
   const body = {
     trash: true,
     section_id: trashDiv.dataset.id
@@ -358,16 +345,9 @@ function trashItem(event) {
 
 
   const card = document.querySelector(`div.card[data-id="${itemId}"]`)
-  // const sectionId = card.dataset.sectionId
   card.remove()
 
   fetch(`${baseUrl}/items/${itemId}`, fetchObj("PATCH", body))
-    .then(resp => resp.json())
-    .then(item => {
-      console.log("go to the trash section eventually")
-      console.log(item)
-      // render trash "section"
-    })
 
 }
 
@@ -447,7 +427,6 @@ function removeItem(event) {
   const card = document.querySelector(`div.card[data-id="${event.target.dataset.id}"]`)
   const sectionId = card.dataset.sectionId
   card.remove()
-  // event.target.parentElement.remove()
   fetch(`${baseUrl}/items/${event.target.dataset.id}`, {
     method: 'DELETE'
   })
@@ -479,24 +458,6 @@ function displaySearchResults(searchResults) {
     addItemButton.textContent = "Add Item to Fridge"
     addItemButton.className = "add-item-button"
     itemDiv.append(addItemButton)
-
-    // const searchItemName = document.createElement("li")
-    // const searchItemImage = document.createElement("img")
-    // const addItemButton = document.createElement("button")
-    // searchItemName.textContent = `Name: ${item.name}`
-    // searchItemName.dataset.itemName = item.name
-    // searchItemImage.src = `${spoonacularImageUrl}${item.image}`
-    // searchItemImage.alt = item.name
-    // // searchItemImage.innerHTML = `<img src=${spoonacularImageUrl}${item.image} alt=${item.name}>`
-    // addItemButton.dataset.imageUrl = `${spoonacularImageUrl}${item.image}`
-    // addItemButton.textContent = "Add Item to Fridge"
-    // addItemButton.className = "add-item-button"
-
-    // searchItemName.append(searchItemImage)
-    // searchItemName.append(addItemButton)
-    // itemList.append(searchItemName)
-    // // itemList.append(searchItemImage)
-
   })
 }
 
@@ -537,7 +498,6 @@ function displayAddItemForm(event) {
           sectionSelect.append(sectionInput)
       })
     })
-  // addItemForm.insertAdjacentElement("beforeend", addButton)
 }
 
 function renderSectionName(section) {
@@ -560,9 +520,6 @@ function renderSectionName(section) {
 }
 
 function logOut(event) {
-  // formDiv.style.display = "block"
-  // main.style.display = "none"
-  // logOutLink.style.display = "none"
   if (event.target.matches("#sign-out")){
     formDiv.classList.remove("hidden")
     main.classList.add("hidden")
