@@ -159,6 +159,7 @@ function displayFridgeMenu(fridge){
   fridgeSection.dataset.id = fridge.id
 
   const displayChoices = fridgeSection.querySelector("div#display-choices")
+  displayChoices.innerHTML = ""
 
   const allItems = document.createElement("div")
   allItems.classList.add("all-items")
@@ -285,15 +286,20 @@ function displayFridgeContents(fridgeOrSection){
   itemList.innerHTML = ""
   fridgeOrSection.items.forEach(renderOneItem)
 
-  // *does not work well without section refresh after last item deleted due to optimistic rendering*
-  // const displayEnd = document.createElement("p")
-  // if (fridgeOrSection.items.length === 0){
-  //   displayEnd.textContent = "Section empty. You can delete this."
-  // }
-  // else {
-  //   displayEnd.textContent = "To delete this fridge section, please move or delete all items."
-  // }
-  // itemList.append(displayEnd)
+  if (fridgeOrSection.classType === "section"){
+    const displayEnd = document.createElement("p")
+    if (fridgeOrSection.items.length === 0){
+      displayEnd.textContent = "Section empty. You can delete this."
+      const deleteButton = document.createElement("button")
+      deleteButton.dataset.id = fridgeOrSection.id
+      displayEnd.append(deleteButton)
+      deleteButton.addEventListener("click", deleteSection)
+    }
+    else {
+      displayEnd.textContent = "To delete this fridge section, please move or delete all items."
+    }
+    itemList.append(displayEnd)
+  }
 }
 
 function updateItem(event) {
@@ -367,11 +373,18 @@ function handleUpdateForm(event){
 }
 
 function removeItem(event) {
-  document.querySelector(`div.card[data-id="${event.target.dataset.id}"]`).remove()
+  const card = document.querySelector(`div.card[data-id="${event.target.dataset.id}"]`)
+  const sectionId = card.dataset.sectionId
+  card.remove()
   // event.target.parentElement.remove()
   fetch(`${baseUrl}/items/${event.target.dataset.id}`, {
     method: 'DELETE'
   })
+    .then(resp => resp.json())
+    .then( () => {
+      fetchSectionById(sectionId)
+        .then(displayFridgeContents)
+    })
 }
 
 function displaySearchResults(searchResults) {
@@ -451,6 +464,7 @@ function displayAddItemForm(event){
         sectionSelect.append(sectionInput)
       })
     }) 
+    // addItemForm.insertAdjacentElement("beforeend", addButton)
 }
 
 function renderSectionName(section){
@@ -492,6 +506,21 @@ function createFridgeItem(event) {
         displayFridgeContents(section)
         displayTitle.textContent = section.name
       })
+    })
+}
+
+function deleteSection(event) {
+  fetch(`${baseUrl}/sections/${event.target.dataset.id}`, {
+    method: 'DELETE'
+  })
+    .then(resp => resp.json())
+    .then(() => {
+      fetchFridgeById(fridgeSection.dataset.id)
+        .then(fridge => {
+          displayFridgeMenu(fridge)
+          displayFridgeContents(fridge)
+          displayTitle.textContent = "All Items"
+        })
     })
 }
 
