@@ -282,7 +282,6 @@ function populateSectionOptions(form){
           sectionInput.textContent = section.name
           sectionInput.value = section.id
           sectionSelect.append(sectionInput)
-          console.log(sectionSelect)
       })
     })
 }
@@ -503,10 +502,11 @@ function createFridgeItem(event) {
     })
   form.reset()
   const removeFormButton = document.querySelector("button#remove-create-button")
-  searchForm.nextElementSibling.remove()
-  removeFormButton.id = "create-item"
-  removeFormButton.textContent = "Create Your Own"
-
+  if (removeFormButton) {
+    searchForm.nextElementSibling.remove()
+    removeFormButton.id = "create-item"
+    removeFormButton.textContent = "Create Your Own"
+  }
 }
 
 function deleteSection(event) {
