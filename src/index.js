@@ -501,6 +501,12 @@ function createFridgeItem(event) {
           displayTitle.textContent = section.name
         })
     })
+  form.reset()
+  const removeFormButton = document.querySelector("button#remove-create-button")
+  searchForm.nextElementSibling.remove()
+  removeFormButton.id = "create-item"
+  removeFormButton.textContent = "Create Your Own"
+
 }
 
 function deleteSection(event) {
