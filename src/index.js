@@ -346,7 +346,7 @@ function renderTrashItem({image, expirationDate, name, id, quantity}){
   itemDiv.classList.add("card")
   itemList.append(itemDiv)
 
-  const epitaphs = ["left behind", "lost forever", "wasted, what a shame", "served no purpose"]
+  const epitaphs = ["left behind", "lost forever", "wasted, what a shame", "served no purpose", "ghost food now", "no longer with us", "will never see a belly", "purpose unfulfilled"]
 
   itemDiv.innerHTML = `
     <img class="card-img-top" src=${image} alt=${name}>
