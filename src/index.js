@@ -104,10 +104,14 @@ function displayFridgeMenu(fridge) {
 function displayFridgeContents(fridgeOrSection) {
   itemList.innerHTML = ""
   fridgeDisplay.dataset.sectionId = ""
+  const deleteMsgDiv = document.querySelector("#delete-message")
+  deleteMsgDiv.innerHTML = ""
+  
 
   if (fridgeOrSection.classType === "section") {
     const displayEnd = document.createElement("p")
     fridgeDisplay.dataset.sectionId = fridgeOrSection.id
+    displayEnd.classList.add("delete-message")
     if (fridgeOrSection.name === trashSectionName){
       fridgeOrSection.items.forEach(renderTrashItem)
     }
@@ -125,7 +129,7 @@ function displayFridgeContents(fridgeOrSection) {
       fridgeOrSection.items.forEach(renderOneItem)
       displayEnd.textContent = "To delete this fridge section, please move or delete all items."
     }
-    itemList.append(displayEnd)
+    deleteMsgDiv.append(displayEnd)
   }
 
   else if (fridgeOrSection.classType === "fridge"){
