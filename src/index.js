@@ -370,7 +370,9 @@ function renderTrashItem({image, expirationDate, name, id, quantity}){
     Swal.fire({
       icon: 'error',
       title: 'SHAME',
-      text: "You shouldn't eat food from the garbage!"
+      text: "You shouldn't eat food from the garbage!",
+      footer: `<a href ="https://www.google.com/search?q=composting+in+my+area" target="_blank">Look for composting options in your area</a>`,
+      confirmButtonText: "You're right, I'm sorry"
     })
   })
   deleteBtn.dataset.id = id
