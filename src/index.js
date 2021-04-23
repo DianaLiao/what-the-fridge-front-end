@@ -188,7 +188,7 @@ function renderCustomItemForm(event){
     <label for="quantity">Amount</label><br>
     <input type="text" name="quantity"><br>
     <label for="dateAdded">Date Added</label><br>
-    <input type="date" name="dateAdded"><br>
+    <input type="date" name="dateAdded" value="${new Date().toISOString().slice(0, 10)}"><br>
     <label for="expirationDate">Expiration Date</label><br>
     <input type="date" name="expirationDate"><br>
     <label for="image">Image</label><br>
@@ -251,7 +251,7 @@ function displayAddItemForm(event) {
   <label for="quantity">Amount</label><br>
   <input type="text" name="quantity"><br>
   <label for="dateAdded">Date Added</label><br>
-  <input type="date" name="dateAdded"><br>
+  <input type="date" name="dateAdded" value="${new Date().toISOString().slice(0, 10)}"><br>
   <label for="expirationDate">Expiration Date</label><br>
   <input type="date" name="expirationDate"><br>
   <label for="section">Section</label><br>
