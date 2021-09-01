@@ -1,7 +1,10 @@
+
+
 /* main initialize functions, i.e. DOMContentLoaded stuff */
 
 
 /* global variables */
+
 const baseUrl = "http://localhost:3000"
 
 let userId 
@@ -15,7 +18,7 @@ const fridgeDisplay = document.querySelector("section#display")
 const searchForm = document.querySelector("form#search-form")
 const itemList = fridgeDisplay.querySelector("div#item-list")
 const addSectionDiv = fridgeSection.querySelector("div#add-section")
-const spoonacularKey = config.MY_API_KEY
+const spoonacularKey = MY_API_KEY
 const spoonacularUrl = `https://api.spoonacular.com/food/ingredients/search?apiKey=${spoonacularKey}&query=`
 const spoonacularImageUrl = 'https://spoonacular.com/cdn/ingredients_100x100/'
 const navBar = document.querySelector("header nav")
