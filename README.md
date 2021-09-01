@@ -3,4 +3,4 @@ This is an inventory management app for your refrigerator! Log food as you buy t
 
 This was a phase 3 group project for Flatiron School, made with [@MelSwell](https://github.com/MelSwell). The frontend is written in plain JavaScript, using a Rails API on the backend.
 
-![What the Fridge demo gif](https://github.com/DianaLiao/what-the-fridge-frontend/blob/main/public/wtfdemo.gif?raw=true)
+![What the Fridge demo gif](https://github.com/DianaLiao/what-the-fridge-front-end/blob/main/wtfdemo.gif?raw=true)
